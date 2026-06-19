@@ -11,9 +11,10 @@ target_sources(
     PRIVATE
         src/main.cpp
         src/rpy.cpp
+        src/detect.cpp
+        src/crypt.cpp
         src/impl/crypt_impl.c
         src/impl/crypt_impl.h
-        src/crypt.cpp
         src/lzss.cpp
         src/rpy/th06.cpp
         src/rpy/th07.cpp
@@ -21,6 +22,7 @@ target_sources(
     PUBLIC
         include/thrpy.h
         include/rpy.h
+        include/detect.h
         include/crypt.h
         include/lzss.h
         include/rpy/th06.h

@@ -56,4 +56,3 @@ const size_t TH_CODE_STR_TABLE_LEN = sizeof(TH_CODE_STR_TABLE) / sizeof(*TH_CODE
 
 std::optional<RpyBuf> rpy_read(const char* file);
 bool rpy_write(const RpyBuf& buf, const char* file);
-ThCode rpy_detect(const RpyBuf& buf);
