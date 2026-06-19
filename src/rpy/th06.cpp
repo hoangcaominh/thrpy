@@ -1,9 +1,17 @@
 #include "rpy/th06.h"
 #include "crypt.h"
+#include <stdexcept>
 
 constexpr size_t DECRYPT_OFFSET = 15;
 
+static inline void validate(const RpyBuf& data) {
+    if (data.size() < DECRYPT_OFFSET)
+        throw std::runtime_error("Invalid data");
+}
+
 RpyBuf Rpy06::decompile(const RpyBuf& data) {
+    validate(data);
+
     RpyBuf decryped = rpy_decrypt06(data.begin() + DECRYPT_OFFSET, data.end(), data[14]);
 
     RpyBuf ret;
@@ -14,6 +22,8 @@ RpyBuf Rpy06::decompile(const RpyBuf& data) {
 }
 
 RpyBuf Rpy06::compile(const RpyBuf& data) {
+    validate(data);
+
     RpyBuf encrypted = rpy_encrypt06(data.begin() + DECRYPT_OFFSET, data.end(), data[14]);
 
     RpyBuf ret;

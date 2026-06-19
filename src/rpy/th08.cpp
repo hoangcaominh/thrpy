@@ -2,11 +2,19 @@
 #include "crypt.h"
 #include "lzss.h"
 #include <cstring>
+#include <stdexcept>
 
 constexpr size_t DECRYPT_OFFSET = 24;
 constexpr size_t DECOMPRESS_OFFSET = 104;
 
+static inline void validate(const RpyBuf& data) {
+    if (data.size() < DECOMPRESS_OFFSET)
+        throw std::runtime_error("Invalid data");
+}
+
 RpyBuf Rpy08::decompile(const RpyBuf &data) {
+    validate(data);
+
     uint32_t userdata_offset = *(uint32_t*)(data.data() + 12);
     RpyBuf decrypted = rpy_decrypt06(data.begin() + DECRYPT_OFFSET, data.begin() + userdata_offset, data[21]);
 
@@ -23,6 +31,8 @@ RpyBuf Rpy08::decompile(const RpyBuf &data) {
 }
 
 RpyBuf Rpy08::compile(const RpyBuf &data) {
+    validate(data);
+
     uint32_t decomp_size = *(uint32_t*)(data.data() + 28);
     RpyBuf compressed = rpy_compress(data.begin() + DECOMPRESS_OFFSET, data.begin() + DECOMPRESS_OFFSET + decomp_size);
     uint32_t comp_data_size = compressed.size();
