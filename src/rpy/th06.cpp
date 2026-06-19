@@ -1,22 +1,23 @@
 #include "rpy/th06.h"
-#include "kaitai/kaitaistream.h"
 #include "crypt.h"
 
+constexpr size_t DECRYPT_OFFSET = 15;
+
 RpyBuf Rpy06::decompile(const RpyBuf& data) {
-    RpyBuf decryped = rpy_decrypt06(data.begin() + 15, data.end(), data[14]);
+    RpyBuf decryped = rpy_decrypt06(data.begin() + DECRYPT_OFFSET, data.end(), data[14]);
 
     RpyBuf ret;
-    ret.insert(ret.end(), data.begin(), data.begin() + 15);
+    ret.insert(ret.end(), data.begin(), data.begin() + DECRYPT_OFFSET);
     ret.insert(ret.end(), decryped.begin(), decryped.end());
 
     return ret;
 }
 
 RpyBuf Rpy06::compile(const RpyBuf& data) {
-    RpyBuf encrypted = rpy_encrypt06(data.begin() + 15, data.end(), data[14]);
+    RpyBuf encrypted = rpy_encrypt06(data.begin() + DECRYPT_OFFSET, data.end(), data[14]);
 
     RpyBuf ret;
-    ret.insert(ret.end(), data.begin(), data.begin() + 15);
+    ret.insert(ret.end(), data.begin(), data.begin() + DECRYPT_OFFSET);
     ret.insert(ret.end(), encrypted.begin(), encrypted.end());
 
     return ret;
