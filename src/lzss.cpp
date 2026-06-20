@@ -111,6 +111,10 @@ public:
         return this->buf;
     }
 
+    void reserve(size_t n) {
+        this->buf.reserve(n);
+    }
+
     unsigned int read(size_t n) {
         if (n > 32)
             return 0;
@@ -129,8 +133,9 @@ public:
     }
 
     void write(bool bit) {
-        if (this->pos >= this->buf.size() * 8)
+        if (this->pos >= this->buf.size() * 8) {
             this->buf.push_back(0x0);
+        }
 
         RpyBuf::iterator it = this->buf.begin() + this->pos / 8;
         uint8_t mask = bit << (7 - this->pos % 8);
@@ -159,6 +164,8 @@ RpyBuf rpy_decompress(RpyBuf::const_iterator begin, RpyBuf::const_iterator end) 
 	uint8_t c;
     BitStream bs(begin, end);
     RpyBuf ret;
+    // Approximate memory needed for decompressed data
+    ret.reserve((end - begin) * 10);
 
 	memset(dict, 0, sizeof(dict));
 
@@ -204,6 +211,8 @@ RpyBuf rpy_compress(RpyBuf::const_iterator begin, RpyBuf::const_iterator end) {
     int replace_count;
 
     BitStream bs;
+    // Approximate memory needed for compressed data
+    bs.reserve((end - begin) * 5 / 10);
     memset(tree, 0, sizeof(tree));
     memset(dict, 0, sizeof(dict));
 
