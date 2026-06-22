@@ -1,15 +1,13 @@
 #pragma once
 
 #include "rpy.h"
-#include "ksy/th06.h"
 
-class Rpy06 final : public RpyBase {
-public:
-    RpyBuf decompile(const RpyBuf &data) override;
-    RpyBuf compile(const RpyBuf &data) override;
-};
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-th06_t th06_deserialize(const RpyBuf& data);
+void rpy_th06(Rpy* rpy);
 
-// TODO: Implement
-RpyBuf th06_serialize(const th06_t& data);
+#ifdef __cplusplus
+}
+#endif

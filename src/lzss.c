@@ -1,6 +1,7 @@
 #include "lzss.h"
-#include <cstdio>
-#include <cstring>
+#include "bitstream.h"
+#include <stdio.h>
+#include <string.h>
 
 #define LZSS_INDEX_SIZE         13
 #define LZSS_LENGTH_SIZE 		4
@@ -100,125 +101,81 @@ int tree_add_string(struct tree_node* tree, uint8_t* dict, int new_node, int* ma
     }
 }
 
-class BitStream {
-public:
-    BitStream()
-        : buf(RpyBuf()), bitcount(0), pos(0) {}
-    BitStream(RpyBuf::const_iterator begin, RpyBuf::const_iterator end)
-        : buf(begin, end), bitcount((end - begin) * 8), pos(0) {}
+size_t rpy_decompress(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
+    if (!data || !out)
+        return 0;
 
-    RpyBuf get_buf() const {
-        return this->buf;
+    struct bitstream* bs = bitstream_init_reader(data, size);
+    if (!bs)
+        return 0;
+
+    uint8_t* tmp = (uint8_t*)calloc(outsize, sizeof(*tmp));
+    if (!tmp) {
+        bitstream_destroy(bs);
+        return 0;
     }
 
-    void reserve(size_t n) {
-        this->buf.reserve(n);
-    }
-
-    unsigned int read(size_t n) {
-        if (n > 32)
-            return 0;
-
-        unsigned int ret = 0;
-        uint8_t byte, mask;
-
-        for (size_t i = 0; i < n && !this->eos(); i++, this->pos++) {
-            byte = this->buf[this->pos / 8];
-            mask = 1 << (7 - this->pos % 8);
-            if (byte & mask)
-                ret |= 1 << (n - i - 1);
-        }
-
-        return ret;
-    }
-
-    void write(bool bit) {
-        if (this->pos >= this->buf.size() * 8) {
-            this->buf.push_back(0x0);
-        }
-
-        RpyBuf::iterator it = this->buf.begin() + this->pos / 8;
-        uint8_t mask = bit << (7 - this->pos % 8);
-        *it |= mask;
-        this->pos++;
-        this->bitcount++;
-    }
-
-    void write(size_t n, uint32_t val) {
-        for (size_t i = 0; i < n; i++)
-            write((val >> (n - i - 1)) & 1);
-    }
-
-    bool eos() const {
-        return this->pos >= this->bitcount;
-    }
-private:
-    RpyBuf buf;
-    size_t bitcount;
-    size_t pos;
-};
-
-RpyBuf rpy_decompress(RpyBuf::const_iterator begin, RpyBuf::const_iterator end) {
 	uint8_t dict[LZSS_DICT_SIZE];
 	int dict_head = LZSS_INIT_WRITE_INDEX;
+    size_t bytes_written = 0;
 	uint8_t c;
-    BitStream bs(begin, end);
-    RpyBuf ret;
-    // Approximate memory needed for decompressed data
-    ret.reserve((end - begin) * 10);
 
 	memset(dict, 0, sizeof(dict));
 
 	while (1) {
-        if (bs.eos())
-            break;
-		if (bs.read(1)) {
-			c = bs.read(8);
-            ret.push_back(c);
-            if (bs.eos())
-                break;
+		if (bitstream_read(bs, 1)) {
+			c = bitstream_read(bs, 8);
+            tmp[bytes_written++] = c;
+            if (bitstream_eos(bs) || bytes_written >= outsize)
+                goto loop_end;
             dict[dict_head] = c;
             dict_head = LZSS_DICT_MODPOS(dict_head + 1);
 		} else {
-			int match_pos = bs.read(LZSS_INDEX_SIZE);
+			int match_pos = bitstream_read(bs, LZSS_INDEX_SIZE);
 			if (!match_pos)
 				break;
-			int match_len = bs.read(LZSS_LENGTH_SIZE);
+			int match_len = bitstream_read(bs, LZSS_LENGTH_SIZE);
 			match_len += LZSS_BREAK_EVEN;
 
 			for (int i = 0; i < match_len; i++) {
 				c = dict[LZSS_DICT_MODPOS(match_pos + i)];
-                ret.push_back(c);
-                if (bs.eos())
-                    break;
+                tmp[bytes_written++] = c;
+                if (bitstream_eos(bs) || bytes_written >= outsize)
+                    goto loop_end;
                 dict[dict_head] = c;
                 dict_head = LZSS_DICT_MODPOS(dict_head + 1);
 			}
 		}
 	}
+loop_end:
+    if (!bitstream_eos(bs))
+        fprintf(stderr, "LZSS data read bytes mismatch or out buffer is too small\n");
+    bitstream_destroy(bs);
 
-    if (!bs.eos())
-        fprintf(stderr, "LZSS data read bytes mismatch\n");
-
-    return ret;
+    mempcpy(out, tmp, outsize);
+    free(tmp);
+    return bytes_written;
 }
 
-RpyBuf rpy_compress(RpyBuf::const_iterator begin, RpyBuf::const_iterator end) {
+size_t rpy_compress(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
+    struct bitstream* bs = bitstream_init_writer();
+    if (!bs)
+        return 0;
+    bitstream_reserve(bs, outsize);
+
     struct tree_node tree[LZSS_DICT_SIZE + 1];
     uint8_t dict[LZSS_DICT_SIZE];
     int dict_head = LZSS_INIT_WRITE_INDEX;
     int i;
     int replace_count;
+    uint8_t* it = data;
 
-    BitStream bs;
-    // Approximate memory needed for compressed data
-    bs.reserve((end - begin) * 5 / 10);
     memset(tree, 0, sizeof(tree));
     memset(dict, 0, sizeof(dict));
 
-    for (i = 0; i < LZSS_LOOK_AHEAD_SIZE && begin < end; i++) {
-        dict[dict_head + i] = *begin;
-        begin++;
+    for (i = 0; i < LZSS_LOOK_AHEAD_SIZE && it < data + size; i++) {
+        dict[dict_head + i] = *it;
+        it++;
     }
 
     int look_ahead_bytes = i;
@@ -231,13 +188,13 @@ RpyBuf rpy_compress(RpyBuf::const_iterator begin, RpyBuf::const_iterator end) {
         if (match_len > look_ahead_bytes)
             match_len = look_ahead_bytes;
         if (match_len < LZSS_BREAK_EVEN) {
-            bs.write(1);
-            bs.write(8, dict[dict_head]);
+            bitstream_write(bs, 1);
+            bitstream_write_n(bs, 8, dict[dict_head]);
             replace_count = 1;
         } else {
-            bs.write(0);
-            bs.write(LZSS_INDEX_SIZE, match_pos);
-            bs.write(LZSS_LENGTH_SIZE, match_len - LZSS_BREAK_EVEN);
+            bitstream_write(bs, 0);
+            bitstream_write_n(bs, LZSS_INDEX_SIZE, match_pos);
+            bitstream_write_n(bs, LZSS_LENGTH_SIZE, match_len - LZSS_BREAK_EVEN);
             replace_count = match_len;
         }
 
@@ -245,24 +202,27 @@ RpyBuf rpy_compress(RpyBuf::const_iterator begin, RpyBuf::const_iterator end) {
             const int pos = LZSS_DICT_MODPOS(dict_head + LZSS_LOOK_AHEAD_SIZE);
             tree_delete_string(tree, pos);
 
-            if (begin < end) {
-                dict[pos] = *begin;
-                begin++;
+            if (it < data + size) {
+                dict[pos] = *it;
+                it++;
             } else {
                 look_ahead_bytes--;
             }
 
             dict_head = LZSS_DICT_MODPOS(dict_head + 1);
-            if (look_ahead_bytes != 0)
+            if (look_ahead_bytes > 0)
                 match_len = tree_add_string(tree, dict, dict_head, &match_pos);
         }
     }
 
-    // bs.write(0);
-    // bs.write(LZSS_INDEX_SIZE, 0);
+    // bitstream_write(bs, 0);
+    // bitstream_write(bs, LZSS_INDEX_SIZE, 0);
 
     // Add a NULL byte at the end of buffer
-    bs.write(8, 0);
+    bitstream_write_n(bs, 8, 0);
 
-    return bs.get_buf();
+    size_t bytes_written = bitstream_get_data(bs, out, outsize);
+    bitstream_destroy(bs);
+
+    return bytes_written;
 }
