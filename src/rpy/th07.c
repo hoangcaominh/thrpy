@@ -7,7 +7,7 @@ static const size_t KEY_OFFSET = 13;
 static const size_t CRYPT_OFFSET = 16;
 static const size_t LZSS_OFFSET = 84;
 
-void rpybuf_decompile_th07(const RpyBuf* buf, RpyBuf* out) {
+void rpybuf_unpack_th07(const RpyBuf* buf, RpyBuf* out) {
     if (!buf || !buf->data || !out || buf->size < LZSS_OFFSET)
         return;
 
@@ -19,7 +19,7 @@ void rpybuf_decompile_th07(const RpyBuf* buf, RpyBuf* out) {
     memcpy(ptr, buf->data, buf->size);
 
     rpy_decrypt06(ptr + CRYPT_OFFSET, buf->size - CRYPT_OFFSET, ptr[KEY_OFFSET]);
-    size_t decomp_size = rpy_decompress(ptr + LZSS_OFFSET, buf->size - LZSS_OFFSET, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
+    size_t decomp_size = rpy_unpack(ptr + LZSS_OFFSET, buf->size - LZSS_OFFSET, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
 
     if (out->data)
         free(out->data);
@@ -28,7 +28,7 @@ void rpybuf_decompile_th07(const RpyBuf* buf, RpyBuf* out) {
     out->capacity = ptrsize;
 }
 
-void rpybuf_compile_th07(const RpyBuf* buf, RpyBuf* out) {
+void rpybuf_pack_th07(const RpyBuf* buf, RpyBuf* out) {
     if (!buf || !buf->data || !out || buf->size < LZSS_OFFSET)
         return;
 
@@ -39,7 +39,7 @@ void rpybuf_compile_th07(const RpyBuf* buf, RpyBuf* out) {
         return;
     memcpy(ptr, buf->data, LZSS_OFFSET);
 
-    size_t comp_size = rpy_compress(buf->data + LZSS_OFFSET, buf->size - LZSS_OFFSET, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
+    size_t comp_size = rpy_pack(buf->data + LZSS_OFFSET, buf->size - LZSS_OFFSET, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
     rpy_encrypt06(ptr + CRYPT_OFFSET, LZSS_OFFSET - CRYPT_OFFSET + comp_size, ptr[KEY_OFFSET]);
 
     if (out->data)
@@ -52,6 +52,6 @@ void rpybuf_compile_th07(const RpyBuf* buf, RpyBuf* out) {
 void rpy_th07(Rpy* rpy) {
     if (!rpy)
         return;
-    rpy->decompile = rpybuf_decompile_th07;
-    rpy->compile = rpybuf_compile_th07;
+    rpy->unpack = rpybuf_unpack_th07;
+    rpy->pack = rpybuf_pack_th07;
 }

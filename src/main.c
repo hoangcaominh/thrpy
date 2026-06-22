@@ -43,11 +43,11 @@ int main(int argc, char* argv[]) {
             return 1;
     }
 
-    rpy->decompile(buf, buf);
+    rpy->unpack(buf, buf);
     snprintf(rpyname, sizeof(rpyname), "%s_uddump.rpy", rpy_prefix);
     rpybuf_write(buf, rpyname);
 
-    rpy->compile(buf, buf);
+    rpy->pack(buf, buf);
     snprintf(rpyname, sizeof(rpyname), "%s_uddupe.rpy", rpy_prefix);
     rpybuf_write(buf, rpyname);
 

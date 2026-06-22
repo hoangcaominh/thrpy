@@ -101,7 +101,7 @@ int tree_add_string(struct tree_node* tree, uint8_t* dict, int new_node, int* ma
     }
 }
 
-size_t rpy_decompress(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
+size_t rpy_unpack(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
     if (!data || !out)
         return 0;
 
@@ -157,7 +157,7 @@ loop_end:
     return bytes_written;
 }
 
-size_t rpy_compress(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
+size_t rpy_pack(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
     struct bitstream* bs = bitstream_init_writer();
     if (!bs)
         return 0;
