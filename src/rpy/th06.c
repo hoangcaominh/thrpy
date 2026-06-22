@@ -5,7 +5,7 @@
 static const size_t KEY_OFFSET = 14;
 static const size_t LZSS_OFFSET = 15;
 
-void rpybuf_decompile_th06(const RpyBuf* buf, RpyBuf* out) {
+void rpybuf_unpack_th06(const RpyBuf* buf, RpyBuf* out) {
     if (!buf || !buf->data || !out || buf->size < LZSS_OFFSET)
         return;
 
@@ -24,7 +24,7 @@ void rpybuf_decompile_th06(const RpyBuf* buf, RpyBuf* out) {
     out->capacity = ptrsize;
 }
 
-void rpybuf_compile_th06(const RpyBuf* buf, RpyBuf* out) {
+void rpybuf_pack_th06(const RpyBuf* buf, RpyBuf* out) {
     if (!buf || !buf->data || !out || buf->size < LZSS_OFFSET)
         return;
 
@@ -46,6 +46,6 @@ void rpybuf_compile_th06(const RpyBuf* buf, RpyBuf* out) {
 void rpy_th06(Rpy* rpy) {
     if (!rpy)
         return;
-    rpy->decompile = rpybuf_decompile_th06;
-    rpy->compile = rpybuf_compile_th06;
+    rpy->unpack = rpybuf_unpack_th06;
+    rpy->pack = rpybuf_pack_th06;
 }

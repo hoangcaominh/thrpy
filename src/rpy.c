@@ -5,8 +5,8 @@ Rpy* rpy_init() {
     Rpy* rpy = (Rpy*)malloc(sizeof(*rpy));
     if (!rpy)
         return NULL;
-    rpy->decompile = NULL;
-    rpy->compile = NULL;
+    rpy->unpack = NULL;
+    rpy->pack = NULL;
 
     return rpy;
 }
