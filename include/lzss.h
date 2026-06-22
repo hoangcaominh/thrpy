@@ -1,6 +1,16 @@
 #pragma once
 
-#include "rpy.h"
+#include <stdint.h>
+#include <stdlib.h>
 
-RpyBuf rpy_decompress(RpyBuf::const_iterator begin, RpyBuf::const_iterator end);
-RpyBuf rpy_compress(RpyBuf::const_iterator begin, RpyBuf::const_iterator end);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+size_t rpy_decompress(uint8_t* data, size_t size, uint8_t* out, size_t outsize);
+size_t rpy_compress(uint8_t* data, size_t size, uint8_t* out, size_t outsize);
+
+#ifdef __cplusplus
+}
+#endif
+

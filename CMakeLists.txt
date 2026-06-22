@@ -2,29 +2,29 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(thrpy)
 
 add_subdirectory(vendor)
-add_subdirectory(ksy)
+# add_subdirectory(ksy)
 
 add_executable(${PROJECT_NAME})
 
 target_sources(
     ${PROJECT_NAME}
     PRIVATE
-        src/main.cpp
-        src/rpy.cpp
-        src/detect.cpp
-        src/crypt.cpp
-        src/impl/crypt_impl.c
-        src/impl/crypt_impl.h
-        src/lzss.cpp
-        src/rpy/th06.cpp
-        src/rpy/th07.cpp
-        src/rpy/th08.cpp
+        src/main.c
+        src/rpy.c
+        src/detect.c
+        src/crypt.c
+        src/lzss.c
+        src/bitstream.c
+        src/rpy/th06.c
+        src/rpy/th07.c
+        src/rpy/th08.c
     PUBLIC
         include/thrpy.h
         include/rpy.h
         include/detect.h
         include/crypt.h
         include/lzss.h
+        src/bitstream.h
         include/rpy/th06.h
         include/rpy/th07.h
         include/rpy/th08.h
@@ -34,7 +34,7 @@ target_include_directories(
     PRIVATE src
     PUBLIC include
 )
-target_link_libraries(
-    ${PROJECT_NAME}
-    PRIVATE ksy
-)
+# target_link_libraries(
+#     ${PROJECT_NAME}
+#     PRIVATE ksy
+# )

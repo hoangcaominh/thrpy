@@ -1,12 +1,23 @@
 #pragma once
 
-#include <cstdint>
-#include <optional>
-#include <vector>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 
-typedef std::vector<uint8_t> RpyBuf;
+struct rpybuf {
+    uint8_t* data;
+    size_t size;
+    size_t capacity;
+};
+typedef struct rpybuf RpyBuf;
 
-enum class ThCode {
+typedef struct rpy Rpy;
+struct rpy {
+    void (*decompile)(const RpyBuf*, RpyBuf*);
+    void (*compile)(const RpyBuf*, RpyBuf*);
+};
+
+enum thcode {
     THNA,
     TH06,
     TH07,
@@ -24,35 +35,41 @@ enum class ThCode {
     TH18,
     TH20,
 };
+typedef enum thcode ThCode;
 
-class RpyBase {
-public:
-    virtual ~RpyBase() = default;
+// const char* const TH_CODE_STR_TABLE[] = {
+//     "",
+//     "th06",
+//     "th07",
+//     "th08",
+//     "th09",
+//     "th10",
+//     "th11",
+//     "th12",
+//     "th128",
+//     "th13",
+//     "th14",
+//     "th15",
+//     "th16",
+//     "th17",
+//     "th18",
+//     "th20",
+// };
 
-    virtual RpyBuf decompile(const RpyBuf& data) = 0;
-    virtual RpyBuf compile(const RpyBuf& data) = 0;
-};
+// const size_t TH_CODE_STR_TABLE_LEN = sizeof(TH_CODE_STR_TABLE) / sizeof(*TH_CODE_STR_TABLE);
 
-const char* const TH_CODE_STR_TABLE[] = {
-    "",
-    "th06",
-    "th07",
-    "th08",
-    "th09",
-    "th10",
-    "th11",
-    "th12",
-    "th128",
-    "th13",
-    "th14",
-    "th15",
-    "th16",
-    "th17",
-    "th18",
-    "th20",
-};
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-const size_t TH_CODE_STR_TABLE_LEN = sizeof(TH_CODE_STR_TABLE) / sizeof(*TH_CODE_STR_TABLE);
+Rpy* rpy_init();
+void rpy_destroy(Rpy* rpy);
 
-std::optional<RpyBuf> rpy_read(const char* file);
-bool rpy_write(const RpyBuf& buf, const char* file);
+RpyBuf* rpybuf_init();
+size_t rpybuf_read(RpyBuf* buf, const char* file);
+size_t rpybuf_write(const RpyBuf* buf, const char* file);
+void rpybuf_destroy(RpyBuf* buf);
+
+#ifdef __cplusplus
+}
+#endif
