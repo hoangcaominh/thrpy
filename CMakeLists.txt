@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
-project(thrpy)
+project(thrpy VERSION 0.0.1)
+
+configure_file(config.h.in config.h)
 
 add_subdirectory(vendor)
 # add_subdirectory(ksy)
@@ -31,7 +33,7 @@ target_sources(
 )
 target_include_directories(
     ${PROJECT_NAME}
-    PRIVATE src
+    PRIVATE src ${PROJECT_BINARY_DIR}
     PUBLIC include
 )
 # target_link_libraries(

@@ -1,10 +1,9 @@
+#include "config.h"
 #include "thrpy.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <argp.h>
 #include <argz.h>
-
-#define DEFAULT_OUTPUT_NAME "output.bin"
 
 #define OPT_PACK 'c'
 #define OPT_UNPACK 'd'
@@ -110,14 +109,14 @@ int main(int argc, char* argv[]) {
     struct argp_option opts[] = {
         { "pack", OPT_PACK, NULL, 0, "Pack a replay." },
         { "unpack", OPT_UNPACK, NULL, 0, "Unpack a replay." },
-        { "output", OPT_OUTPUT, "FILE", 0, "Output to file. Default to output.bin in the current directory." },
+        { "output", OPT_OUTPUT, "FILE", 0, "Output to file. Default to " DEFAULT_OUTPUT_NAME " in the current directory." },
         { NULL },
     };
     struct argp argp = {
         opts,
         parse_opt,
         "FILE",
-        "Process Touhou Project replay file\v"
+        "Process Touhou Project replay file.\v"
         "By default the program assumes the unpack option, therefore it is not required to specify the -d or --unpack option."
     };
     struct thrpy_args thargs = {

@@ -1,0 +1,6 @@
+#pragma once
+
+#define PROJECT_VERSION "${${PROJECT_NAME}_VERSION}"
+
+#define DEFAULT_OUTPUT_NAME "output.bin"
+const char* argp_program_version = PROJECT_VERSION;
