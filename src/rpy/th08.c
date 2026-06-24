@@ -1,7 +1,6 @@
 #include "rpy/th08.h"
 #include "crypt.h"
 #include "lzss.h"
-#include <stdio.h>
 #include <string.h>
 
 static const size_t KEY_OFFSET = 21;
