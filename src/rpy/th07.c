@@ -19,7 +19,7 @@ void rpybuf_unpack_th07(const RpyBuf* buf, RpyBuf* out) {
     memcpy(ptr, buf->data, buf->size);
 
     rpy_decrypt06(ptr + CRYPT_OFFSET, buf->size - CRYPT_OFFSET, ptr[KEY_OFFSET]);
-    size_t decomp_size = rpy_unpack(ptr + LZSS_OFFSET, buf->size - LZSS_OFFSET, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
+    size_t decomp_size = rpy_unlzss(ptr + LZSS_OFFSET, buf->size - LZSS_OFFSET, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
 
     if (out->data)
         free(out->data);
@@ -39,7 +39,7 @@ void rpybuf_pack_th07(const RpyBuf* buf, RpyBuf* out) {
         return;
     memcpy(ptr, buf->data, LZSS_OFFSET);
 
-    size_t comp_size = rpy_pack(buf->data + LZSS_OFFSET, buf->size - LZSS_OFFSET, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
+    size_t comp_size = rpy_lzss(buf->data + LZSS_OFFSET, buf->size - LZSS_OFFSET, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
     rpy_encrypt06(ptr + CRYPT_OFFSET, LZSS_OFFSET - CRYPT_OFFSET + comp_size, ptr[KEY_OFFSET]);
 
     if (out->data)
