@@ -67,7 +67,7 @@ static size_t pack(RpyBuf* buf) {
         LZSS_OFFSET - CRYPT_OFFSET + comp_size,
         buf->data[KEY_OFFSET]
     );
-    memcpy(
+    memmove(
         ptr_lzss + comp_size,
         buf->data + userdata_offset,
         buf->size - userdata_offset
