@@ -6,7 +6,7 @@ static const size_t KEY_OFFSET = 13;
 static const size_t CRYPT_OFFSET = 16;
 static const size_t LZSS_OFFSET = 84;
 
-size_t unpack_th07(RpyBuf* buf) {
+static size_t unpack(RpyBuf* buf) {
     if (!buf || buf->size < LZSS_OFFSET || buf->capacity < LZSS_OFFSET)
         return 0;
 
@@ -26,7 +26,7 @@ size_t unpack_th07(RpyBuf* buf) {
     return buf->size;
 }
 
-size_t pack_th07(RpyBuf* buf) {
+static size_t pack(RpyBuf* buf) {
     if (!buf || buf->size < LZSS_OFFSET || buf->capacity < LZSS_OFFSET)
         return 0;
 
@@ -49,6 +49,6 @@ size_t pack_th07(RpyBuf* buf) {
 void rpy_th07(Rpy* rpy) {
     if (!rpy)
         return;
-    rpy->unpack_fn = unpack_th07;
-    rpy->pack_fn = pack_th07;
+    rpy->unpack_fn = unpack;
+    rpy->pack_fn = pack;
 }

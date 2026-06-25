@@ -4,7 +4,7 @@
 static const size_t KEY_OFFSET = 14;
 static const size_t CRYPT_OFFSET = 15;
 
-size_t unpack_th06(RpyBuf* buf) {
+static size_t unpack(RpyBuf* buf) {
     if (!buf || buf->size < CRYPT_OFFSET)
         return 0;
 
@@ -16,7 +16,7 @@ size_t unpack_th06(RpyBuf* buf) {
     return buf->size;
 }
 
-size_t pack_th06(RpyBuf* buf) {
+static size_t pack(RpyBuf* buf) {
     if (!buf || buf->size < CRYPT_OFFSET)
         return 0;
 
@@ -31,6 +31,6 @@ size_t pack_th06(RpyBuf* buf) {
 void rpy_th06(Rpy* rpy) {
     if (!rpy)
         return;
-    rpy->unpack_fn = unpack_th06;
-    rpy->pack_fn = pack_th06;
+    rpy->unpack_fn = unpack;
+    rpy->pack_fn = pack;
 }
