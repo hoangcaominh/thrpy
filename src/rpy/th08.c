@@ -15,8 +15,16 @@ size_t rpybuf_unpack_th08(RpyBuf* buf) {
     if (buf->size < userdata_offset)
         return 0;
 
+    size_t userdata_size = buf->size - userdata_offset;
     uint32_t comp_size = userdata_offset - LZSS_OFFSET;
     uint8_t* ptr_lzss = buf->data + LZSS_OFFSET;
+
+    // Backup userdata section
+    uint8_t* userdata = (uint8_t*)calloc(userdata_size, sizeof(*userdata));
+    if (!userdata)
+        return 0;
+    memcpy(userdata, buf->data + userdata_offset, userdata_size);
+
     rpy_decrypt06(
         buf->data + CRYPT_OFFSET,
         userdata_offset - CRYPT_OFFSET,
@@ -30,9 +38,10 @@ size_t rpybuf_unpack_th08(RpyBuf* buf) {
     );
     memcpy(
         ptr_lzss + decomp_size,
-        buf->data + userdata_offset,
-        buf->size - userdata_offset
+        userdata,
+        userdata_size
     );
+    free(userdata);
 
     buf->size = buf->size - comp_size + decomp_size;
     return buf->size;
@@ -46,15 +55,16 @@ size_t rpybuf_pack_th08(RpyBuf* buf) {
     uint32_t decomp_size = *(uint32_t*)(buf->data + 28);
     uint32_t userdata_offset = LZSS_OFFSET + decomp_size;
     uint8_t* ptr_lzss = buf->data + LZSS_OFFSET;
+
     size_t comp_size = rpy_lzss(
         ptr_lzss,
         decomp_size,
         ptr_lzss,
         buf->capacity - LZSS_OFFSET
     );
-    rpy_decrypt06(
+    rpy_encrypt06(
         buf->data + CRYPT_OFFSET,
-        userdata_offset - CRYPT_OFFSET,
+        LZSS_OFFSET - CRYPT_OFFSET + comp_size,
         buf->data[KEY_OFFSET]
     );
     memcpy(
