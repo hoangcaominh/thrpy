@@ -17,12 +17,12 @@ void rpy_destroy(Rpy* rpy) {
     free(rpy);
 }
 
-void rpy_unpack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out) {
-    rpy->unpack_fn(buf, out);
+size_t rpy_unpack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out) {
+    return rpy->unpack_fn(buf, out);
 }
 
-void rpy_pack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out) {
-    rpy->pack_fn(buf, out);
+size_t rpy_pack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out) {
+    return rpy->pack_fn(buf, out);
 }
 
 RpyBuf* rpybuf_init() {

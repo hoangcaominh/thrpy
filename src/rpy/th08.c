@@ -7,15 +7,15 @@ static const size_t KEY_OFFSET = 21;
 static const size_t CRYPT_OFFSET = 24;
 static const size_t LZSS_OFFSET = 104;
 
-void rpybuf_unpack_th08(const RpyBuf* buf, RpyBuf* out) {
+size_t rpybuf_unpack_th08(const RpyBuf* buf, RpyBuf* out) {
     if (!buf || !buf->data || !out || buf->size < LZSS_OFFSET)
-        return;
+        return 0;
 
     // Approximate memory needed for decompressed data
     size_t ptrsize = buf->size * 10;
     uint8_t* ptr = (uint8_t*)calloc(ptrsize, sizeof(*ptr));
     if (!ptr)
-        return;
+        return 0;
     memcpy(ptr, buf->data, buf->size);
 
     uint32_t userdata_offset = *(uint32_t*)(buf->data + 12);
@@ -29,17 +29,19 @@ void rpybuf_unpack_th08(const RpyBuf* buf, RpyBuf* out) {
     out->data = ptr;
     out->size = buf->size - comp_size + decomp_size;
     out->capacity = ptrsize;
+
+    return out->size;
 }
 
-void rpybuf_pack_th08(const RpyBuf* buf, RpyBuf* out) {
+size_t rpybuf_pack_th08(const RpyBuf* buf, RpyBuf* out) {
     if (!buf || !buf->data || !out || buf->size < LZSS_OFFSET)
-        return;
+        return 0;
 
     // Approximate memory needed for decompressed data
     size_t ptrsize = buf->size / 2;
     uint8_t* ptr = (uint8_t*)calloc(ptrsize, sizeof(*ptr));
     if (!ptr)
-        return;
+        return 0;
     memcpy(ptr, buf->data, LZSS_OFFSET);
 
     // Could also use USER magic
@@ -56,6 +58,8 @@ void rpybuf_pack_th08(const RpyBuf* buf, RpyBuf* out) {
     out->data = ptr;
     out->size = buf->size - decomp_size + comp_size;
     out->capacity = ptrsize;
+
+    return out->size;
 }
 
 void rpy_th08(Rpy* rpy) {
