@@ -61,6 +61,6 @@ void rpybuf_pack_th08(const RpyBuf* buf, RpyBuf* out) {
 void rpy_th08(Rpy* rpy) {
     if (!rpy)
         return;
-    rpy->unpack = rpybuf_unpack_th08;
-    rpy->pack = rpybuf_pack_th08;
+    rpy->unpack_fn = rpybuf_unpack_th08;
+    rpy->pack_fn = rpybuf_pack_th08;
 }

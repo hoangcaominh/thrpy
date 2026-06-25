@@ -46,6 +46,6 @@ void rpybuf_pack_th06(const RpyBuf* buf, RpyBuf* out) {
 void rpy_th06(Rpy* rpy) {
     if (!rpy)
         return;
-    rpy->unpack = rpybuf_unpack_th06;
-    rpy->pack = rpybuf_pack_th06;
+    rpy->unpack_fn = rpybuf_unpack_th06;
+    rpy->pack_fn = rpybuf_pack_th06;
 }

@@ -87,11 +87,11 @@ int do_command(char* file, struct thrpy_args* thargs) {
     switch (thargs->mode) {
         case 0:
         case OPT_UNPACK:
-            rpy->unpack(buf, buf);
+            rpy_unpack(rpy, buf, buf);
             rpybuf_write(buf, thargs->outfile);
             break;
         case OPT_PACK:
-            rpy->pack(buf, buf);
+            rpy_pack(rpy, buf, buf);
             rpybuf_write(buf, thargs->outfile);
             break;
     }
