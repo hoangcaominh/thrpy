@@ -7,59 +7,64 @@ static const size_t KEY_OFFSET = 21;
 static const size_t CRYPT_OFFSET = 24;
 static const size_t LZSS_OFFSET = 104;
 
-size_t rpybuf_unpack_th08(const RpyBuf* buf, RpyBuf* out) {
-    if (!buf || !buf->data || !out || buf->size < LZSS_OFFSET)
+size_t rpybuf_unpack_th08(RpyBuf* buf) {
+    if (!buf || buf->size < LZSS_OFFSET || buf->capacity < LZSS_OFFSET)
         return 0;
-
-    // Approximate memory needed for decompressed data
-    size_t ptrsize = buf->size * 10;
-    uint8_t* ptr = (uint8_t*)calloc(ptrsize, sizeof(*ptr));
-    if (!ptr)
-        return 0;
-    memcpy(ptr, buf->data, buf->size);
 
     uint32_t userdata_offset = *(uint32_t*)(buf->data + 12);
+    if (buf->size < userdata_offset)
+        return 0;
+
     uint32_t comp_size = userdata_offset - LZSS_OFFSET;
-    rpy_decrypt06(ptr + CRYPT_OFFSET, userdata_offset - CRYPT_OFFSET, ptr[KEY_OFFSET]);
-    size_t decomp_size = rpy_unlzss(ptr + LZSS_OFFSET, comp_size, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
-    memcpy(ptr + LZSS_OFFSET + decomp_size, buf->data + userdata_offset, buf->size - userdata_offset);
+    uint8_t* ptr_lzss = buf->data + LZSS_OFFSET;
+    rpy_decrypt06(
+        buf->data + CRYPT_OFFSET,
+        userdata_offset - CRYPT_OFFSET,
+        buf->data[KEY_OFFSET]
+    );
+    size_t decomp_size = rpy_unlzss(
+        ptr_lzss,
+        comp_size,
+        ptr_lzss,
+        buf->capacity - LZSS_OFFSET
+    );
+    memcpy(
+        ptr_lzss + decomp_size,
+        buf->data + userdata_offset,
+        buf->size - userdata_offset
+    );
 
-    if (out->data)
-        free(out->data);
-    out->data = ptr;
-    out->size = buf->size - comp_size + decomp_size;
-    out->capacity = ptrsize;
-
-    return out->size;
+    buf->size = buf->size - comp_size + decomp_size;
+    return buf->size;
 }
 
-size_t rpybuf_pack_th08(const RpyBuf* buf, RpyBuf* out) {
-    if (!buf || !buf->data || !out || buf->size < LZSS_OFFSET)
+size_t rpybuf_pack_th08(RpyBuf* buf) {
+    if (!buf || buf->size < LZSS_OFFSET || buf->capacity < LZSS_OFFSET)
         return 0;
-
-    // Approximate memory needed for decompressed data
-    size_t ptrsize = buf->size / 2;
-    uint8_t* ptr = (uint8_t*)calloc(ptrsize, sizeof(*ptr));
-    if (!ptr)
-        return 0;
-    memcpy(ptr, buf->data, LZSS_OFFSET);
 
     // Could also use USER magic
     uint32_t decomp_size = *(uint32_t*)(buf->data + 28);
     uint32_t userdata_offset = LZSS_OFFSET + decomp_size;
-    size_t userdata_size = buf->size - userdata_offset;
+    uint8_t* ptr_lzss = buf->data + LZSS_OFFSET;
+    size_t comp_size = rpy_lzss(
+        ptr_lzss,
+        decomp_size,
+        ptr_lzss,
+        buf->capacity - LZSS_OFFSET
+    );
+    rpy_decrypt06(
+        buf->data + CRYPT_OFFSET,
+        userdata_offset - CRYPT_OFFSET,
+        buf->data[KEY_OFFSET]
+    );
+    memcpy(
+        ptr_lzss + comp_size,
+        buf->data + userdata_offset,
+        buf->size - userdata_offset
+    );
 
-    size_t comp_size = rpy_lzss(buf->data + LZSS_OFFSET, decomp_size, ptr + LZSS_OFFSET, ptrsize - LZSS_OFFSET);
-    rpy_encrypt06(ptr + CRYPT_OFFSET, LZSS_OFFSET - CRYPT_OFFSET + comp_size, ptr[KEY_OFFSET]);
-    memcpy(ptr + LZSS_OFFSET + comp_size, buf->data + userdata_offset, userdata_size);
-
-    if (out->data)
-        free(out->data);
-    out->data = ptr;
-    out->size = buf->size - decomp_size + comp_size;
-    out->capacity = ptrsize;
-
-    return out->size;
+    buf->size = buf->size - decomp_size + comp_size;
+    return buf->size;
 }
 
 void rpy_th08(Rpy* rpy) {

@@ -13,8 +13,8 @@ typedef struct rpybuf RpyBuf;
 
 typedef struct rpy Rpy;
 struct rpy {
-    size_t (*unpack_fn)(const RpyBuf*, RpyBuf*);
-    size_t (*pack_fn)(const RpyBuf*, RpyBuf*);
+    size_t (*unpack_fn)(RpyBuf*);
+    size_t (*pack_fn)(RpyBuf*);
 };
 
 enum thcode {

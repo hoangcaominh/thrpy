@@ -1,5 +1,6 @@
 #include "rpy.h"
 #include <stdio.h>
+#include <string.h>
 
 Rpy* rpy_init() {
     Rpy* rpy = (Rpy*)malloc(sizeof(*rpy));
@@ -18,11 +19,60 @@ void rpy_destroy(Rpy* rpy) {
 }
 
 size_t rpy_unpack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out) {
-    return rpy->unpack_fn(buf, out);
+    if (!rpy || !rpy->unpack_fn || !buf || !buf->data || !out)
+        return 0;
+
+    // Approximate memory needed for decompressed data
+    size_t ptrsize = buf->size * 10;
+    uint8_t* ptr = (uint8_t*)calloc(ptrsize, sizeof(*ptr));
+    if (!ptr)
+        return 0;
+    memcpy(ptr, buf->data, buf->size);
+
+    RpyBuf tmp = {
+        .data = ptr,
+        .size = buf->size,
+        .capacity = ptrsize,
+    };
+    size_t size = rpy->unpack_fn(&tmp);
+    // Shrink array to data size
+    tmp.data = (uint8_t*)reallocarray(tmp.data, size, 1);
+
+    if (out->data)
+        free(out->data);
+    out->data = tmp.data;
+    out->size = tmp.size;
+    out->capacity = tmp.capacity;
+
+    return out->size;
 }
 
 size_t rpy_pack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out) {
-    return rpy->pack_fn(buf, out);
+    if (!rpy || !rpy->pack_fn || !buf || !buf->data || !out)
+        return 0;
+
+    size_t ptrsize = buf->size;
+    uint8_t* ptr = (uint8_t*)calloc(ptrsize, sizeof(*ptr));
+    if (!ptr)
+        return 0;
+    memcpy(ptr, buf->data, buf->size);
+
+    RpyBuf tmp = {
+        .data = ptr,
+        .size = buf->size,
+        .capacity = ptrsize,
+    };
+    size_t size = rpy->pack_fn(&tmp);
+    // Shrink array to data size
+    tmp.data = (uint8_t*)reallocarray(tmp.data, size, 1);
+
+    if (out->data)
+        free(out->data);
+    out->data = tmp.data;
+    out->size = tmp.size;
+    out->capacity = tmp.capacity;
+
+    return out->size;
 }
 
 RpyBuf* rpybuf_init() {
