@@ -26,14 +26,14 @@ void rpy_encrypt06(uint8_t* data, size_t size, uint8_t key) {
     crypt06(data, size, key, crypt06_func_encrypt);
 }
 
-typedef void (*crypt_func)(uint8_t*, uint8_t*, const uint8_t);
+typedef void (*crypt_func)(uint8_t*, uint8_t*, size_t, size_t, const uint8_t);
 
-static inline void crypt_func_decrypt(uint8_t* a, uint8_t* b, const uint8_t base) {
-    *a = *b ^ base;
+static inline void crypt_func_decrypt(uint8_t* data, uint8_t* tmp, size_t p, size_t q, const uint8_t base) {
+	data[q] = tmp[p] ^ base;
 }
 
-static inline void crypt_func_encrypt(uint8_t* a, uint8_t* b, const uint8_t base) {
-    *b = *a ^ base;
+static inline void crypt_func_encrypt(uint8_t* data, uint8_t* tmp, size_t p, size_t q, const uint8_t base) {
+	data[p] = tmp[q] ^ base;
 }
 
 void crypt(uint8_t* data, size_t size, RpyModernKey* key, crypt_func func) {
@@ -62,13 +62,13 @@ void crypt(uint8_t* data, size_t size, RpyModernKey* key, crypt_func func) {
 		tp2 = p + block_size - 2;
 		hf = (block_size + (block_size & 0x1)) / 2;
 		for (i = 0; i < hf; ++i, ++p) {
-            func(data + tp1, tmp + p, base);
+            func(data, tmp, p, tp1, base);
 			base += add;
 			tp1 -= 2;
 		}
 		hf = block_size / 2;
 		for (i = 0; i < hf; ++i, ++p) {
-            func(data + tp2, tmp + p, base);
+            func(data, tmp, p, tp2, base);
 			base += add;
 			tp2 -= 2;
 		}
@@ -85,4 +85,3 @@ void rpy_decrypt(uint8_t* data, size_t size, RpyModernKey* key) {
 void rpy_encrypt(uint8_t* data, size_t size, RpyModernKey* key) {
     crypt(data, size, key, crypt_func_encrypt);
 }
-
