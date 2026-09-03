@@ -79,6 +79,9 @@ int do_command(char* file, struct thrpy_args* thargs) {
         case TH08:
             rpy_th08(rpy);
             break;
+        case TH15:
+            rpy_th15(rpy);
+            break;
         default:
             fprintf(stderr, "Unable to detect supported game.\n");
             return 1;

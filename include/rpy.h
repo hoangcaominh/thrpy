@@ -13,8 +13,8 @@ typedef struct rpybuf RpyBuf;
 
 typedef struct rpy Rpy;
 struct rpy {
-    void (*unpack_fn)(const RpyBuf*, RpyBuf*);
-    void (*pack_fn)(const RpyBuf*, RpyBuf*);
+    size_t (*unpack_fn)(RpyBuf*);
+    size_t (*pack_fn)(RpyBuf*);
 };
 
 enum thcode {
@@ -64,8 +64,8 @@ extern "C" {
 
 Rpy* rpy_init();
 void rpy_destroy(Rpy* rpy);
-void rpy_pack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out);
-void rpy_unpack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out);
+size_t rpy_pack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out);
+size_t rpy_unpack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out);
 
 RpyBuf* rpybuf_init();
 size_t rpybuf_read(RpyBuf* buf, const char* file);

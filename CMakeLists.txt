@@ -17,9 +17,12 @@ target_sources(
         src/crypt.c
         src/lzss.c
         src/bitstream.c
+        src/rpy/thmodern.c
+        src/rpy/thmodern.h
         src/rpy/th06.c
         src/rpy/th07.c
         src/rpy/th08.c
+        src/rpy/th15.c
     PUBLIC
         include/thrpy.h
         include/rpy.h
@@ -30,6 +33,7 @@ target_sources(
         include/rpy/th06.h
         include/rpy/th07.h
         include/rpy/th08.h
+        include/rpy/th15.h
 )
 target_include_directories(
     ${PROJECT_NAME}
