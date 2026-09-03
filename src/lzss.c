@@ -152,7 +152,7 @@ loop_end:
         fprintf(stderr, "LZSS data read bytes mismatch or out buffer is too small\n");
     bitstream_destroy(bs);
 
-    mempcpy(out, tmp, outsize);
+    mempcpy(out, tmp, bytes_written);
     free(tmp);
     return bytes_written;
 }
@@ -216,7 +216,7 @@ size_t rpy_lzss(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
     }
 
     // bitstream_write(bs, 0);
-    // bitstream_write(bs, LZSS_INDEX_SIZE, 0);
+    // bitstream_write_n(bs, LZSS_INDEX_SIZE, 0);
 
     // Add a NULL byte at the end of buffer
     bitstream_write_n(bs, 8, 0);
