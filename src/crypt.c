@@ -1,4 +1,5 @@
 #include "crypt.h"
+#include <string.h>
 
 typedef void (*crypt06_func)(uint8_t*, const uint8_t);
 
@@ -27,18 +28,26 @@ void rpy_encrypt06(uint8_t* data, size_t size, uint8_t key) {
 
 typedef void (*crypt_func)(uint8_t*, uint8_t*, const uint8_t);
 
-static inline void crypt_func_decrypt(uint8_t* b, uint8_t* t, const uint8_t base) {
-    *b = *t ^ base;
+static inline void crypt_func_decrypt(uint8_t* a, uint8_t* b, const uint8_t base) {
+    *a = *b ^ base;
 }
 
-static inline void crypt_func_encrypt(uint8_t* b, uint8_t* t, const uint8_t base) {
-    *t = *b ^ base;
+static inline void crypt_func_encrypt(uint8_t* a, uint8_t* b, const uint8_t base) {
+    *b = *a ^ base;
 }
 
-void crypt(uint8_t* data, size_t size, size_t block_size, uint8_t base, uint8_t add, crypt_func func) {
+void crypt(uint8_t* data, size_t size, RpyModernKey* key, crypt_func func) {
+	if (!data || !key)
+		return;
+
     uint8_t* tmp = (uint8_t*)calloc(size, sizeof(*tmp));
     if (!tmp)
         return;
+	memcpy(tmp, data, size);
+
+	size_t block_size = key->block_size;
+	uint8_t base = key->base;
+	uint8_t add = key->add;
 
 	int i, p = 0, tp1, tp2, hf, left = size;
 	if ((left % block_size) < (block_size / 4))
@@ -69,11 +78,11 @@ void crypt(uint8_t* data, size_t size, size_t block_size, uint8_t base, uint8_t 
     free(tmp);
 }
 
-void rpy_decrypt(uint8_t* data, size_t size, size_t block_size, uint8_t base, uint8_t add) {
-    crypt(data, size, block_size, base, add, crypt_func_decrypt);
+void rpy_decrypt(uint8_t* data, size_t size, RpyModernKey* key) {
+    crypt(data, size, key, crypt_func_decrypt);
 }
 
-void rpy_encrypt(uint8_t* data, size_t size, size_t block_size, uint8_t base, uint8_t add) {
-    crypt(data, size, block_size, base, add, crypt_func_encrypt);
+void rpy_encrypt(uint8_t* data, size_t size, RpyModernKey* key) {
+    crypt(data, size, key, crypt_func_encrypt);
 }
 
