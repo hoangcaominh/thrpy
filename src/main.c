@@ -5,9 +5,19 @@
 #include <argp.h>
 #include <argz.h>
 
-#define OPT_PACK 'c'
-#define OPT_UNPACK 'd'
-#define OPT_OUTPUT 'o'
+#define OPT_PACK_NAME "pack"
+#define OPT_PACK_KEY 'z'
+
+#define OPT_UNPACK_NAME "unpack"
+#define OPT_UNPACK_KEY 'x'
+
+#define OPT_OUTPUT_NAME "output"
+#define OPT_OUTPUT_KEY 'o'
+
+
+const struct argp_option OPT_PACK = { OPT_PACK_NAME, OPT_PACK_KEY, NULL, 0, "Pack a replay." };
+const struct argp_option OPT_UNPACK = { OPT_UNPACK_NAME, OPT_UNPACK_KEY, NULL, 0, "Unpack a replay." };
+const struct argp_option OPT_OUTPUT = { OPT_OUTPUT_NAME, OPT_OUTPUT_KEY, "FILE", 0, "Output to file. Default to " DEFAULT_OUTPUT_NAME " in the current directory." };
 
 struct thrpy_args {
     char* outfile;
@@ -20,17 +30,17 @@ static int parse_opt(int key, char* arg, struct argp_state* state) {
     struct thrpy_args* a = state->input;
 
     switch (key) {
-        case OPT_PACK:
+        case OPT_PACK_KEY:
             if (a->mode)
                 argp_failure(state, 1, 0, "cannot pack and unpack replay in the same command");
-            a->mode = OPT_PACK;
+            a->mode = key;
             break;
-        case OPT_UNPACK:
+        case OPT_UNPACK_KEY:
             if (a->mode)
                 argp_failure(state, 1, 0, "cannot pack and unpack replay in the same command");
-            a->mode = OPT_UNPACK;
+            a->mode = key;
             break;
-        case 'o':
+        case OPT_OUTPUT_KEY:
             a->outfile = arg;
             break;
         case ARGP_KEY_INIT:
@@ -119,11 +129,11 @@ int do_command(char* file, struct thrpy_args* thargs) {
 
     switch (thargs->mode) {
         case 0:
-        case OPT_UNPACK:
+        case OPT_UNPACK_KEY:
             rpy_unpack(rpy, buf, buf);
             rpybuf_write(buf, thargs->outfile);
             break;
-        case OPT_PACK:
+        case OPT_PACK_KEY:
             rpy_pack(rpy, buf, buf);
             rpybuf_write(buf, thargs->outfile);
             break;
@@ -140,17 +150,18 @@ ret:
 
 int main(int argc, char* argv[]) {
     struct argp_option opts[] = {
-        { "pack", OPT_PACK, NULL, 0, "Pack a replay." },
-        { "unpack", OPT_UNPACK, NULL, 0, "Unpack a replay." },
-        { "output", OPT_OUTPUT, "FILE", 0, "Output to file. Default to " DEFAULT_OUTPUT_NAME " in the current directory." },
+        OPT_PACK,
+        OPT_UNPACK,
+        OPT_OUTPUT,
         { NULL },
     };
+
     struct argp argp = {
         opts,
         parse_opt,
         "FILE",
         "Process Touhou Project replay file.\v"
-        "By default the program assumes the unpack option, therefore it is not required to specify the -d or --unpack option."
+        "By default the program assumes the unpack option, therefore it is not required to specify -x or --unpack in the command."
     };
     struct thrpy_args thargs = {
         .outfile = DEFAULT_OUTPUT_NAME,
