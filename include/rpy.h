@@ -20,6 +20,7 @@ struct rpy {
 enum thcode {
     THNA,
     TH06,
+    TH06NC,
     TH07,
     TH08,
     TH09,

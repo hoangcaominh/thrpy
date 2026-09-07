@@ -7,6 +7,7 @@ extern "C" {
 #endif
 
 void rpy_th06(Rpy* rpy);
+void rpy_th06nc(Rpy* rpy);
 
 #ifdef __cplusplus
 }

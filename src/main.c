@@ -83,6 +83,9 @@ int do_command(char* file, struct thrpy_args* thargs) {
         case TH06:
             rpy_th06(rpy);
             break;
+        case TH06NC:
+            rpy_th06nc(rpy);
+            break;
         case TH07:
             rpy_th07(rpy);
             break;

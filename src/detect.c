@@ -1,5 +1,19 @@
 #include "detect.h"
 
+ThCode rpybuf_detect_th06(const RpyBuf* buf) {
+    if (buf->size < 6)
+        return THNA;
+
+    uint16_t version = *(uint16_t*)(buf->data + 4);
+    // original
+    if (version == 0x0102)
+        return TH06;
+    // new classic
+    else if (version == 0x010B)
+        return TH06NC;
+    return THNA;
+}
+
 ThCode rpybuf_detect_th13_or_th14(const RpyBuf* buf) {
     if (buf->size < 28)
         return THNA;
@@ -26,7 +40,7 @@ ThCode rpybuf_detect(const RpyBuf* buf) {
     uint32_t magic = *(uint32_t*)buf->data;
     switch (magic) {
         case 0x50523654:    // T6RP
-            return TH06;
+            return rpybuf_detect_th06(buf);
         case 0x50523754:    // T7RP
             return TH07;
         case 0x50523854:    // T8RP
