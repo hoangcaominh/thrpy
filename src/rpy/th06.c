@@ -33,10 +33,13 @@ static size_t unpack_nc(RpyBuf* buf) {
     if (!buf || buf->size < CRYPT_OFFSET_NC)
         return 0;
 
+    uint8_t null_byte = *(uint8_t*)(buf->data + 0x1C);
+    uint8_t key = null_byte - (0x1C - CRYPT_OFFSET_NC) * 7;
+
     rpy_decrypt06(
         buf->data + CRYPT_OFFSET_NC,
         buf->size - CRYPT_OFFSET_NC,
-        99 - (CRYPT_OFFSET - CRYPT_OFFSET_NC) * 7
+        key
     );
     return buf->size;
 }
@@ -45,10 +48,13 @@ static size_t pack_nc(RpyBuf* buf) {
     if (!buf || buf->size < CRYPT_OFFSET_NC)
         return 0;
 
+    uint8_t null_byte = *(uint8_t*)(buf->data + 0x1C);
+    uint8_t key = null_byte - (0x1C - CRYPT_OFFSET_NC) * 7;
+
     rpy_encrypt06(
         buf->data + CRYPT_OFFSET_NC,
         buf->size - CRYPT_OFFSET_NC,
-        99 - (CRYPT_OFFSET - CRYPT_OFFSET_NC) * 7
+        key
     );
     return buf->size;
 }
