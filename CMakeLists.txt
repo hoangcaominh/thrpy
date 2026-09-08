@@ -1,22 +1,40 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(thrpy VERSION 0.0.1)
 
+set(TARGET_BIN "${PROJECT_NAME}-bin")
+set(TARGET_TEST "${PROJECT_NAME}-test")
+
+# GoogleTest requires at least C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG 063de7e9578f82b369302001269680b4b1553359
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 configure_file(config.h.in config.h)
 
 add_subdirectory(vendor)
 # add_subdirectory(ksy)
 
-add_executable(${PROJECT_NAME})
+add_library(${PROJECT_NAME})
 
 target_sources(
     ${PROJECT_NAME}
     PRIVATE
-        src/main.c
+        # src/main.c
         src/rpy.c
         src/detect.c
         src/crypt.c
         src/lzss.c
         src/bitstream.c
+        src/bitstream.h
         src/rpy/thmodern.c
         src/rpy/thmodern.h
         src/rpy/thmodern20.c
@@ -41,7 +59,6 @@ target_sources(
         include/detect.h
         include/crypt.h
         include/lzss.h
-        src/bitstream.h
         include/rpy/th06.h
         include/rpy/th07.h
         include/rpy/th08.h
@@ -66,3 +83,21 @@ target_include_directories(
 #     ${PROJECT_NAME}
 #     PRIVATE ksy
 # )
+
+# Test
+enable_testing()
+add_executable(
+    ${TARGET_TEST}
+    tests/gtest/test_detect.cpp
+)
+target_include_directories(
+    ${TARGET_TEST}
+    PRIVATE ${PROJECT_BINARY_DIR}
+    PUBLIC include
+)
+target_link_libraries(
+    ${TARGET_TEST}
+    PRIVATE ${PROJECT_NAME} GTest::gtest_main
+)
+include(GoogleTest)
+gtest_discover_tests(${TARGET_TEST})
