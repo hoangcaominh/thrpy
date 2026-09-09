@@ -8,8 +8,8 @@ namespace {
 class TestTh06 : public TestRpy {};
 
 const char* REPLAYS[] = {
-    "th6_01",
-    "th6_02",
+    "th6_01",   // main game
+    "th6_02",   // extra
 };
 const size_t REPLAYS_SIZE = sizeof(REPLAYS) / sizeof(REPLAYS[0]);
 
