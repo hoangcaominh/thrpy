@@ -88,7 +88,8 @@ target_include_directories(
 enable_testing()
 add_executable(
     ${TARGET_TEST}
-    tests/gtest/test_detect.cpp
+    tests/gtest/helper.h
+    tests/gtest/test_th06.cpp
 )
 target_include_directories(
     ${TARGET_TEST}
