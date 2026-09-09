@@ -84,6 +84,19 @@ target_include_directories(
 #     PRIVATE ksy
 # )
 
+# Executable
+add_executable(${TARGET_BIN} src/main.c)
+set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+target_include_directories(
+    ${TARGET_BIN}
+    PRIVATE src ${PROJECT_BINARY_DIR}
+    PUBLIC include
+)
+target_link_libraries(
+    ${TARGET_BIN}
+    PRIVATE ${PROJECT_NAME}
+)
+
 # Test
 enable_testing()
 add_executable(
