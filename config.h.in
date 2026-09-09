@@ -4,4 +4,3 @@
 #define PROJECT_DIR "${CMAKE_SOURCE_DIR}"
 
 #define DEFAULT_OUTPUT_NAME "output.bin"
-const char* argp_program_version = PROJECT_VERSION;

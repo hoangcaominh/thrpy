@@ -14,6 +14,7 @@
 #define OPT_OUTPUT_NAME "output"
 #define OPT_OUTPUT_KEY 'o'
 
+const char* argp_program_version = PROJECT_VERSION;
 
 const struct argp_option OPT_PACK = { OPT_PACK_NAME, OPT_PACK_KEY, NULL, 0, "Pack a replay." };
 const struct argp_option OPT_UNPACK = { OPT_UNPACK_NAME, OPT_UNPACK_KEY, NULL, 0, "Unpack a replay." };
