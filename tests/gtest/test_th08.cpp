@@ -42,7 +42,6 @@ TEST_F(TestTh08, PackTh08) {
     rpy_th08(rpy);
     for (size_t i = 0; i < REPLAYS_SIZE; i++) {
         snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.rpx", REPLAYS[i]);
-        printf("%s\n", path);
         rpybuf_read(buf, path);
         snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.rpy", REPLAYS[i]);
         rpybuf_read(expected_buf, path);
