@@ -104,6 +104,7 @@ add_executable(
     tests/gtest/helper.h
     tests/gtest/test_th06.cpp
     tests/gtest/test_th07.cpp
+    tests/gtest/test_th08.cpp
 )
 target_include_directories(
     ${TARGET_TEST}
