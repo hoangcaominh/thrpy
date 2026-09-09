@@ -20,4 +20,5 @@ public:
     RpyBuf* buf;
     RpyBuf* expected_buf;
     Rpy* rpy;
+    char path[256];
 };
