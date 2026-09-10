@@ -116,6 +116,7 @@ add_executable(
     tests/gtest/test_th17.cpp
     tests/gtest/test_th18.cpp
     tests/gtest/test_th20.cpp
+    tests/gtest/test_identical.cpp
 )
 target_include_directories(
     ${TARGET_TEST}
