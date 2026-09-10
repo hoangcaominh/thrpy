@@ -45,7 +45,7 @@ size_t pack_thmodern20(RpyBuf* buf, RpyModernKey* key1, RpyModernKey* key2) {
     size_t decomp_size = *(uint32_t*)(buf->data + DECOMP_LEN_OFFSET);
     size_t userdata_offset = DATA_OFFSET + decomp_size;
 
-    size_t comp_size = rpy_lzss_no_padding(ptr_data, decomp_size, ptr_data, buf->capacity - DATA_OFFSET);
+    size_t comp_size = rpy_lzss(ptr_data, decomp_size, ptr_data, buf->capacity - DATA_OFFSET);
     *(uint32_t*)(buf->data + COMP_LEN_OFFSET) = comp_size;
     rpy_encrypt(ptr_data, comp_size, key2);
     rpy_encrypt(ptr_data, comp_size, key1);

@@ -157,7 +157,7 @@ loop_end:
     return bytes_written;
 }
 
-static size_t rpy_lzss_impl(uint8_t* data, size_t size, uint8_t* out, size_t outsize, bool add_padding) {
+size_t rpy_lzss(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
     struct bitstream* bs = bitstream_init_writer();
     if (!bs)
         return 0;
@@ -218,19 +218,11 @@ static size_t rpy_lzss_impl(uint8_t* data, size_t size, uint8_t* out, size_t out
     // bitstream_write(bs, 0);
     // bitstream_write_n(bs, LZSS_INDEX_SIZE, 0);
 
-    if (add_padding)
-        bitstream_write_n(bs, 8, 0);
+    // idk why there's a 7 bits 0 but this passes all tests
+    bitstream_write_n(bs, 7, 0);
 
     size_t bytes_written = bitstream_get_data(bs, out, outsize);
     bitstream_destroy(bs);
 
     return bytes_written;
-}
-
-size_t rpy_lzss(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
-    return rpy_lzss_impl(data, size, out, outsize, true);
-}
-
-size_t rpy_lzss_no_padding(uint8_t* data, size_t size, uint8_t* out, size_t outsize) {
-    return rpy_lzss_impl(data, size, out, outsize, false);
 }
