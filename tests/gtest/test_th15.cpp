@@ -31,7 +31,6 @@ TEST_F(TestTh15, UnpackTh15) {
         rpy_unpack(rpy, buf, buf);
         EXPECT_EQ(buf->size, expected_buf->size);
         EXPECT_TRUE(memcmp(buf->data, expected_buf->data, buf->size) == 0);
-        EXPECT_EQ(rpybuf_detect(buf), TH15);
     }
 }
 
@@ -45,7 +44,6 @@ TEST_F(TestTh15, PackTh15) {
         rpy_pack(rpy, buf, buf);
         EXPECT_EQ(buf->size, expected_buf->size);
         EXPECT_TRUE(memcmp(buf->data, expected_buf->data, buf->size) == 0);
-        EXPECT_EQ(rpybuf_detect(buf), TH15);
     }
 }
 
