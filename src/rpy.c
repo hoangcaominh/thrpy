@@ -6,6 +6,7 @@ Rpy* rpy_init() {
     Rpy* rpy = (Rpy*)malloc(sizeof(*rpy));
     if (!rpy)
         return NULL;
+    rpy->gamecode = THNA;
     rpy->unpack_fn = NULL;
     rpy->pack_fn = NULL;
 

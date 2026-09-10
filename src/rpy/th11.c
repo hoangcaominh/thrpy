@@ -15,6 +15,7 @@ static size_t pack(RpyBuf* buf) {
 void rpy_th11(Rpy* rpy) {
     if (!rpy)
         return;
+    rpy->gamecode = TH11;
     rpy->unpack_fn = unpack;
     rpy->pack_fn = pack;
 }

@@ -4,19 +4,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-struct rpybuf {
-    uint8_t* data;
-    size_t size;
-    size_t capacity;
-};
-typedef struct rpybuf RpyBuf;
-
-typedef struct rpy Rpy;
-struct rpy {
-    size_t (*unpack_fn)(RpyBuf*);
-    size_t (*pack_fn)(RpyBuf*);
-};
-
 enum thcode {
     THNA,
     TH06,
@@ -36,6 +23,20 @@ enum thcode {
     TH20,
 };
 typedef enum thcode ThCode;
+
+struct rpybuf {
+    uint8_t* data;
+    size_t size;
+    size_t capacity;
+};
+typedef struct rpybuf RpyBuf;
+
+typedef struct rpy Rpy;
+struct rpy {
+    size_t (*unpack_fn)(RpyBuf*);
+    size_t (*pack_fn)(RpyBuf*);
+    ThCode gamecode;
+};
 
 // const char* const TH_CODE_STR_TABLE[] = {
 //     "",
