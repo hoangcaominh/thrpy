@@ -1,3 +1,14 @@
 samples/th06 filter=lfs diff=lfs merge=lfs -text
 samples/th07 filter=lfs diff=lfs merge=lfs -text
 samples/th08 filter=lfs diff=lfs merge=lfs -text
+samples/th13 filter=lfs diff=lfs merge=lfs -text
+samples/th14 filter=lfs diff=lfs merge=lfs -text
+samples/th15 filter=lfs diff=lfs merge=lfs -text
+samples/th18 filter=lfs diff=lfs merge=lfs -text
+samples/th128 filter=lfs diff=lfs merge=lfs -text
+samples/th16 filter=lfs diff=lfs merge=lfs -text
+samples/th17 filter=lfs diff=lfs merge=lfs -text
+samples/th10 filter=lfs diff=lfs merge=lfs -text
+samples/th11 filter=lfs diff=lfs merge=lfs -text
+samples/th12 filter=lfs diff=lfs merge=lfs -text
+samples/th20 filter=lfs diff=lfs merge=lfs -text

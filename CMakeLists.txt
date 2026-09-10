@@ -105,6 +105,17 @@ add_executable(
     tests/gtest/test_th06.cpp
     tests/gtest/test_th07.cpp
     tests/gtest/test_th08.cpp
+    tests/gtest/test_th10.cpp
+    tests/gtest/test_th11.cpp
+    tests/gtest/test_th12.cpp
+    tests/gtest/test_th128.cpp
+    tests/gtest/test_th13.cpp
+    tests/gtest/test_th14.cpp
+    tests/gtest/test_th15.cpp
+    tests/gtest/test_th16.cpp
+    tests/gtest/test_th17.cpp
+    tests/gtest/test_th18.cpp
+    tests/gtest/test_th20.cpp
 )
 target_include_directories(
     ${TARGET_TEST}
