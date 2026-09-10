@@ -70,6 +70,12 @@ size_t bitstream_get_size(struct bitstream* bs) {
     return (bs->bitcount + 7) / 8;
 }
 
+size_t bitstream_get_bitcount(struct bitstream* bs) {
+    if (!bs)
+        return 0;
+    return bs->bitcount;
+}
+
 bool bitstream_reserve(struct bitstream* bs, size_t newsize) {
     if (!bs)
         return false;

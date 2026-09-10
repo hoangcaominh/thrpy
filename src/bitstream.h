@@ -16,6 +16,7 @@ unsigned int bitstream_read(struct bitstream* bs, size_t n);
 
 struct bitstream* bitstream_init_writer();
 size_t bitstream_get_size(struct bitstream* bs);
+size_t bitstream_get_bitcount(struct bitstream* bs);
 bool bitstream_reserve(struct bitstream* bs, size_t newsize);
 void bitstream_write(struct bitstream* bs, bool bit);
 void bitstream_write_n(struct bitstream* bs, size_t n, unsigned int val);
