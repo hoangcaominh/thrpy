@@ -1,4 +1,18 @@
 #include "detect.h"
+#include "rpy/th06.h"
+#include "rpy/th07.h"
+#include "rpy/th08.h"
+#include "rpy/th10.h"
+#include "rpy/th11.h"
+#include "rpy/th12.h"
+#include "rpy/th128.h"
+#include "rpy/th13.h"
+#include "rpy/th14.h"
+#include "rpy/th15.h"
+#include "rpy/th16.h"
+#include "rpy/th17.h"
+#include "rpy/th18.h"
+#include "rpy/th20.h"
 
 ThCode rpybuf_detect_th13_or_th14(const RpyBuf* buf) {
     if (buf->size < 28)
@@ -55,5 +69,54 @@ ThCode rpybuf_detect(const RpyBuf* buf) {
             return TH20;
         default:
             return THNA;
+    }
+}
+
+void rpy_autoconf(Rpy* rpy, const RpyBuf* buf) {
+    switch (rpybuf_detect(buf)) {
+        case TH06:
+            rpy_th06(rpy);
+            break;
+        case TH07:
+            rpy_th07(rpy);
+            break;
+        case TH08:
+            rpy_th08(rpy);
+            break;
+        case TH10:
+            rpy_th10(rpy);
+            break;
+        case TH11:
+            rpy_th11(rpy);
+            break;
+        case TH12:
+            rpy_th12(rpy);
+            break;
+        case TH128:
+            rpy_th128(rpy);
+            break;
+        case TH13:
+            rpy_th13(rpy);
+            break;
+        case TH14:
+            rpy_th14(rpy);
+            break;
+        case TH15:
+            rpy_th15(rpy);
+            break;
+        case TH16:
+            rpy_th16(rpy);
+            break;
+        case TH17:
+            rpy_th17(rpy);
+            break;
+        case TH18:
+            rpy_th18(rpy);
+            break;
+        case TH20:
+            rpy_th20(rpy);
+            break;
+        default:
+            break;
     }
 }
