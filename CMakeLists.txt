@@ -4,6 +4,9 @@ project(thrpy VERSION 0.0.1)
 set(GEN_DIR "${CMAKE_BINARY_DIR}/generated")
 file(MAKE_DIRECTORY ${GEN_DIR})
 
+# Options
+option(thrpy_BUILD_TESTS "Build tests" OFF)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -77,6 +80,8 @@ target_sources(
         src/rpy/th18.c
         src/rpy/th20.c
         ${KSY_GEN_SOURCE_LIST}
+        proto/th06.proto
+        proto/thdef.proto
     PUBLIC
         include/thrpy.h
         include/rpy.h
@@ -129,45 +134,6 @@ target_link_libraries(
 )
 
 # Test
-enable_testing()
-set(TARGET_TEST "${PROJECT_NAME}-test")
-
-FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG 063de7e9578f82b369302001269680b4b1553359
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-add_executable(
-    ${TARGET_TEST}
-    tests/gtest/helper.h
-    tests/gtest/test_th06.cpp
-    tests/gtest/test_th07.cpp
-    tests/gtest/test_th08.cpp
-    tests/gtest/test_th10.cpp
-    tests/gtest/test_th11.cpp
-    tests/gtest/test_th12.cpp
-    tests/gtest/test_th128.cpp
-    tests/gtest/test_th13.cpp
-    tests/gtest/test_th14.cpp
-    tests/gtest/test_th15.cpp
-    tests/gtest/test_th16.cpp
-    tests/gtest/test_th17.cpp
-    tests/gtest/test_th18.cpp
-    tests/gtest/test_th20.cpp
-    tests/gtest/test_identical.cpp
-)
-target_include_directories(
-    ${TARGET_TEST}
-    PRIVATE ${PROJECT_BINARY_DIR}
-    PUBLIC include
-)
-target_link_libraries(
-    ${TARGET_TEST}
-    PRIVATE ${PROJECT_NAME} GTest::gtest_main
-)
-include(GoogleTest)
-gtest_discover_tests(${TARGET_TEST})
+if (thrpy_BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
