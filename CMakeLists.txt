@@ -1,21 +1,23 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(thrpy VERSION 0.0.1)
 
+set(GEN_DIR "${CMAKE_BINARY_DIR}/generated")
+file(MAKE_DIRECTORY ${GEN_DIR})
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
+configure_file(config.h.in "${GEN_DIR}/config.h")
 
-set(PROTO_GEN_DIR ${CMAKE_BINARY_DIR}/generated)
-make_directory(${PROTO_GEN_DIR})
+# protobuf
+set(PROTO_GEN_DIR "${GEN_DIR}/proto")
+file(MAKE_DIRECTORY ${PROTO_GEN_DIR})
 
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/vendor")
 set(absl_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/protobuf/lib/cmake/absl")
 set(utf8_range_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/protobuf/lib/cmake/utf8_range")
 
 find_package(protobuf REQUIRED CONFIG)
-
-configure_file(config.h.in config.h)
 
 add_subdirectory(vendor)
 # add_subdirectory(ksy)
@@ -79,8 +81,7 @@ protobuf_generate(
 )
 target_include_directories(
     ${PROJECT_NAME}
-    # PRIVATE src ${PROJECT_BINARY_DIR}
-    PRIVATE src ${PROTO_GEN_DIR}
+    PRIVATE src ${GEN_DIR}
     PUBLIC include
 )
 target_link_libraries(
@@ -95,8 +96,7 @@ add_executable(${TARGET_BIN} src/main.c)
 set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 target_include_directories(
     ${TARGET_BIN}
-    PRIVATE src ${PROJECT_BINARY_DIR}
-    PUBLIC include
+    PRIVATE src ${GEN_DIR}
 )
 target_link_libraries(
     ${TARGET_BIN}
