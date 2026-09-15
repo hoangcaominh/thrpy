@@ -22,6 +22,30 @@ find_package(protobuf REQUIRED CONFIG)
 add_subdirectory(vendor)
 # add_subdirectory(ksy)
 
+# kaitai-struct-cpp
+set(KSY_SOURCE_DIR "${CMAKE_SOURCE_DIR}/ksy")
+set(KSY_GEN_DIR "${GEN_DIR}/ksy")
+file(MAKE_DIRECTORY ${KSY_GEN_DIR})
+
+file(GLOB KSY_FILES ${KSY_SOURCE_DIR}/*.ksy)
+set(KSY_GEN_HEADER_LIST)
+set(KSY_GEN_SOURCE_LIST)
+foreach(KSY_FILE ${KSY_FILES})
+    get_filename_component(KSY_BASENAME ${KSY_FILE} NAME_WE)
+    set(KSY_GEN_HEADER "${KSY_GEN_DIR}/${KSY_BASENAME}.h")
+    set(KSY_GEN_SOURCE "${KSY_GEN_DIR}/${KSY_BASENAME}.cpp")
+
+    add_custom_command(
+        WORKING_DIRECTORY ${KSY_GEN_DIR}
+        OUTPUT ${KSY_GEN_HEADER} ${KSY_GEN_SOURCE}
+        COMMAND kaitai-struct-compiler -t cpp_stl ${KSY_FILE}
+    )
+
+    list(APPEND KSY_GEN_HEADER_LIST ${KSY_GEN_HEADER})
+    list(APPEND KSY_GEN_SOURCE_LIST ${KSY_GEN_SOURCE})
+endforeach()
+
+# thrpy library
 add_library(${PROJECT_NAME})
 
 target_sources(
@@ -52,6 +76,7 @@ target_sources(
         src/rpy/th17.c
         src/rpy/th18.c
         src/rpy/th20.c
+        ${KSY_GEN_SOURCE_LIST}
     PUBLIC
         include/thrpy.h
         include/rpy.h
@@ -72,6 +97,7 @@ target_sources(
         include/rpy/th17.h
         include/rpy/th18.h
         include/rpy/th20.h
+        ${KSY_GEN_HEADER_LIST}
 )
 protobuf_generate(
     TARGET ${PROJECT_NAME}
@@ -86,7 +112,6 @@ target_include_directories(
 )
 target_link_libraries(
     ${PROJECT_NAME}
-    # PRIVATE ksy
     PRIVATE vendor
 )
 
