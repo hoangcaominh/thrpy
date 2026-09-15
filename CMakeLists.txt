@@ -1,12 +1,19 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(thrpy VERSION 0.0.1)
 
-set(TARGET_BIN "${PROJECT_NAME}-bin")
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
+
+set(PROTO_GEN_DIR ${CMAKE_BINARY_DIR}/generated)
+make_directory(${PROTO_GEN_DIR})
+
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/vendor")
+set(absl_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/protobuf/lib/cmake/absl")
+set(utf8_range_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/protobuf/lib/cmake/utf8_range")
+
+find_package(protobuf REQUIRED CONFIG)
 
 configure_file(config.h.in config.h)
 
@@ -64,17 +71,26 @@ target_sources(
         include/rpy/th18.h
         include/rpy/th20.h
 )
+protobuf_generate(
+    TARGET ${PROJECT_NAME}
+    LANGUAGE cpp
+    IMPORT_DIRS "${CMAKE_SOURCE_DIR}/proto"
+    PROTOC_OUT_DIR ${PROTO_GEN_DIR}
+)
 target_include_directories(
     ${PROJECT_NAME}
-    PRIVATE src ${PROJECT_BINARY_DIR}
+    # PRIVATE src ${PROJECT_BINARY_DIR}
+    PRIVATE src ${PROTO_GEN_DIR}
     PUBLIC include
 )
-# target_link_libraries(
-#     ${PROJECT_NAME}
-#     PRIVATE ksy
-# )
+target_link_libraries(
+    ${PROJECT_NAME}
+    # PRIVATE ksy
+    PRIVATE vendor
+)
 
 # Executable
+set(TARGET_BIN "${PROJECT_NAME}-bin")
 add_executable(${TARGET_BIN} src/main.c)
 set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 target_include_directories(

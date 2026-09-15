@@ -2,3 +2,4 @@
 .vscode/
 [Bb]uild/
 samples/
+vendor/protobuf
