@@ -65,7 +65,7 @@ target_sources(
         src/rpy/thmodern.h
         src/rpy/thmodern20.c
         src/rpy/thmodern20.h
-        src/rpy/th06.c
+        src/rpy/th06.cpp
         src/rpy/th07.c
         src/rpy/th08.c
         src/rpy/th10.c

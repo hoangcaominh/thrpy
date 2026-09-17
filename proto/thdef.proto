@@ -1,0 +1,12 @@
+edition = "2023";
+package thdef;
+
+enum Difficulty {
+    // option allow_alias = true;
+    EASY = 0;
+    NORMAL = 1;
+    HARD = 2;
+    LUNATIC = 3;
+    EXTRA = 4;
+    PHANTASM = 5;
+}

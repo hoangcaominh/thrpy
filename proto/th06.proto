@@ -1,0 +1,32 @@
+edition = "2023";
+package th06;
+
+import "thdef.proto";
+
+enum Shot {
+    REIMUA = 0;
+    REIMUB = 1;
+    MARISAA = 2;
+    MARISAB = 3;
+}
+
+message Th06ReplayData {
+    string game = 1;
+    string version = 2;
+    Shot shot = 3;
+    thdef.Difficulty difficulty = 4;
+    uint64 score = 5;
+    string date = 6;
+    string name = 7;
+    float slowdown = 8;
+    repeated Th06StageData stages = 100;
+}
+
+message Th06StageData {
+    uint64 score = 1;
+    uint32 seed = 2;
+    uint32 power = 3;
+    uint32 lives = 4;
+    uint32 bombs = 5;
+    uint32 rank = 6;
+}
