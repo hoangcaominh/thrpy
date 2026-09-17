@@ -7,7 +7,7 @@ file(MAKE_DIRECTORY ${GEN_DIR})
 # Options
 option(thrpy_BUILD_TESTS "Build tests" OFF)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 configure_file(config.h.in "${GEN_DIR}/config.h")
