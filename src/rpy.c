@@ -6,9 +6,11 @@ Rpy* rpy_init() {
     Rpy* rpy = (Rpy*)malloc(sizeof(*rpy));
     if (!rpy)
         return NULL;
+
     rpy->gamecode = THNA;
     rpy->unpack_fn = NULL;
     rpy->pack_fn = NULL;
+    rpy->parse_fn = NULL;
 
     return rpy;
 }
@@ -74,6 +76,12 @@ size_t rpy_pack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out) {
     out->capacity = tmp.capacity;
 
     return out->size;
+}
+
+bool rpy_parse(const Rpy* rpy, const RpyBuf* buf, const RpyParseOptions* option) {
+    if (!rpy || !rpy->parse_fn || !buf || !buf->data)
+        return false;
+    return rpy->parse_fn(buf, option);
 }
 
 RpyBuf* rpybuf_init() {

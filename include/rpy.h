@@ -24,6 +24,13 @@ enum thcode {
 };
 typedef enum thcode ThCode;
 
+struct rpy_parse_options {
+    bool include_replay_header;
+    bool include_stage_header;
+    bool include_input_frames;
+};
+typedef struct rpy_parse_options RpyParseOptions;
+
 struct rpybuf {
     uint8_t* data;
     size_t size;
@@ -35,6 +42,7 @@ typedef struct rpy Rpy;
 struct rpy {
     size_t (*unpack_fn)(RpyBuf*);
     size_t (*pack_fn)(RpyBuf*);
+    bool (*parse_fn)(const RpyBuf*, const RpyParseOptions*);
     ThCode gamecode;
 };
 
@@ -67,6 +75,7 @@ Rpy* rpy_init();
 void rpy_destroy(Rpy* rpy);
 size_t rpy_pack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out);
 size_t rpy_unpack(const Rpy* rpy, const RpyBuf* buf, RpyBuf* out);
+bool rpy_parse(const Rpy* rpy, const RpyBuf* buf, const RpyParseOptions* option);
 
 RpyBuf* rpybuf_init();
 size_t rpybuf_read(RpyBuf* buf, const char* file);
