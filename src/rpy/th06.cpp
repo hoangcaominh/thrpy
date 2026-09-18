@@ -102,8 +102,10 @@ static size_t pack(RpyBuf* buf) {
         case th06::VERSION_ORIGINAL:
         case th06::VERSION_CLASSIC:
             pack_fn = pack_o;
+            break;
         case th06::VERSION_NEW_CLASSIC:
             pack_fn = pack_nc;
+            break;
         default:
             return 0;
     }
