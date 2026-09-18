@@ -200,21 +200,17 @@ bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     void (*parse_replay_header)(th06::Th06ReplayData*, const void*);
     void (*parse_stage_header)(th06::Th06ReplayData*, const void*);
 
-    msg.set_game(thdef::GameId::TH06);
-    uint16_t version = kd.version();
-    switch (get_version(buf)) {
+    th06::Version version = get_version(buf);
+    switch (version) {
         case th06::VERSION_ORIGINAL:
-            msg.set_version(th06::Version::VERSION_ORIGINAL);
             parse_replay_header = parse_replay_header_original;
             parse_stage_header = parse_stage_header_original;
             break;
         case th06::VERSION_CLASSIC:
-            msg.set_version(th06::Version::VERSION_CLASSIC);
             parse_replay_header = parse_replay_header_classic;
             parse_stage_header = parse_stage_header_classic;
             break;
         case th06::VERSION_NEW_CLASSIC:
-            msg.set_version(th06::Version::VERSION_NEW_CLASSIC);
             parse_replay_header = parse_replay_header_new_classic;
             parse_stage_header = parse_stage_header_new_classic;
             break;
@@ -222,6 +218,8 @@ bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
             return false;
     }
 
+    msg.set_game(thdef::GameId::TH06);
+    msg.set_version(version);
     if (option != NULL && option->include_replay_header)
         parse_replay_header(&msg, kd.body());
     if (option != NULL && option->include_stage_header)
