@@ -11,7 +11,7 @@ enum Shot {
 }
 
 message Th06ReplayData {
-    string game = 1;
+    thdef.GameId game = 1;
     string version = 2;
     Shot shot = 3;
     thdef.Difficulty difficulty = 4;

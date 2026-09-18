@@ -1,6 +1,25 @@
 edition = "2023";
 package thdef;
 
+enum GameId {
+    THNA = 0;
+    TH06 = 6;
+    TH07 = 7;
+    TH08 = 8;
+    TH09 = 9;
+    TH10 = 10;
+    TH11 = 11;
+    TH12 = 12;
+    TH128 = 128;
+    TH13 = 13;
+    TH14 = 14;
+    TH15 = 15;
+    TH16 = 16;
+    TH17 = 17;
+    TH18 = 18;
+    TH20 = 20;
+}
+
 enum Difficulty {
     // option allow_alias = true;
     EASY = 0;
