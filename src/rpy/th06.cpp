@@ -189,7 +189,7 @@ static void parse_stage_header_new_classic(th06::Th06ReplayData* msg, const void
     }
 }
 
-bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
+static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     std::string s(reinterpret_cast<char*>(buf->data), buf->size);
     kaitai::kstream ks(s);
     th06_t kd(&ks);
