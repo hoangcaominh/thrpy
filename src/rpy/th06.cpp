@@ -9,7 +9,8 @@
 
 static const size_t KEY_OFFSET = 14;
 static const size_t CRYPT_OFFSET = 15;
-static const size_t CRYPT_OFFSET_NC = 16;
+static const size_t KEY_OFFSET_NC = 0x12;
+static const size_t CRYPT_OFFSET_NC = 0x13;
 
 static th06::Version get_version(const RpyBuf* buf) {
     if (buf->size < 6)
@@ -55,14 +56,12 @@ static size_t unpack_nc(RpyBuf* buf) {
     if (!buf || buf->size < CRYPT_OFFSET_NC)
         return 0;
 
-    uint8_t null_byte = buf->data[0x1C];
-    uint8_t key = null_byte + (CRYPT_OFFSET_NC - 0x1C) * 7;
-
     rpy_decrypt06(
         buf->data + CRYPT_OFFSET_NC,
         buf->size - CRYPT_OFFSET_NC,
-        key
+        buf->data[KEY_OFFSET_NC]
     );
+
     return buf->size;
 }
 
@@ -70,12 +69,10 @@ static size_t pack_nc(RpyBuf* buf) {
     if (!buf || buf->size < CRYPT_OFFSET_NC)
         return 0;
 
-    uint8_t key = (uint8_t)((CRYPT_OFFSET_NC - 0x1C) * 7);
-
     rpy_encrypt06(
         buf->data + CRYPT_OFFSET_NC,
         buf->size - CRYPT_OFFSET_NC,
-        key
+        buf->data[KEY_OFFSET_NC]
     );
     return buf->size;
 }

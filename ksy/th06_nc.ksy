@@ -11,9 +11,11 @@ seq:
   - id: padding
     size: 3
   - id: unknown_1
-    type: u4
+    size: 6
+  - id: key
+    type: u1
   - id: unknown_2
-    type: u4
+    size: 1
   - id: date
     type: str
     size: 9
