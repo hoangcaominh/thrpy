@@ -3,83 +3,79 @@ meta:
   file-extension: raw
   endian: le
 seq:
-  - id: file_header
-    type: file_header
-  - id: header
-    type: header
+  - id: magic
+    contents: T8RP
+  - id: version
+    type: u2
+  - id: unknown
+    size: 6
+  - id: userdata_offset
+    type: u4
+  - id: unknown_2
+    type: u4
+  - id: key
+    type: u1
+  - id: unknown_3
+    size: 3
+  - id: comp_size
+    type: u4
+  - id: decomp_size
+    type: u4
+  - id: stage_offsets
+    type: stage_pointer
+    repeat: expr
+    repeat-expr: 9
+  - id: potential_stage_size
+    type: u4
+    repeat: expr
+    repeat-expr: 9
+  - id: unknown_1
+    size: 2
+  - id: shot
+    type: u1
+  - id: difficulty
+    type: u1
+  - id: date
+    type: str
+    size: 6
+    encoding: ASCII
+    terminator: 0x0
+  - id: name
+    type: str
+    encoding: Shift_JIS
+    terminator: 0x0
+    size: 10
+  - id: spell_card_id
+    type: u2
+  - id: spell_card_name
+    type: str
+    size: 50
+    encoding: Shift_JIS
+    terminator: 0x0
+  - id: score
+    type: u4
+  - id: unknown_4
+    type: u4
+    repeat: expr
+    repeat-expr: 25
+  - id: slowdown
+    type: f4
+instances:
+  userdata:
+    pos: userdata_offset
+    type: userdata
 types:
-  file_header:
-    seq:
-      - id: magic
-        contents: T8RP
-      - id: version
-        size: 2
-      - id: unknown
-        size: 6
-      - id: userdata_offset
-        type: u4
-      - id: unknown_2
-        type: u4
-      - id: key
-        type: u1
-      - id: unknown_3
-        size: 3
-      - id: comp_size
-        type: u4
-      - id: decomp_size
-        type: u4
-      - id: stage_offsets
-        type: stage_pointer
-        repeat: expr
-        repeat-expr: 9
-      - id: potential_stage_size
-        type: u4
-        repeat: expr
-        repeat-expr: 9
-  header:
-    seq:
-      - id: unknown_1
-        size: 2
-      - id: shot
-        type: u1
-      - id: difficulty
-        type: u1
-      - id: date
-        type: str
-        size: 6
-        encoding: ASCII
-        terminator: 0x0
-      - id: name
-        type: str
-        encoding: SJIS
-        terminator: 0x0
-        size: 10
-      - id: spell_card_id
-        type: u2
-      - id: spell_card_name
-        type: str
-        size: 50
-        encoding: SJIS
-        terminator: 0x0
-      - id: score
-        type: u4
-      - id: unknown_4
-        type: u4
-        repeat: expr
-        repeat-expr: 25
-      - id: slowdown
-        type: f4
   stage_pointer:
     seq:
       - id: offset
         doc: Location of the stage struct
         type: u4
     instances:
-      body:
+      stage_header:
         pos: offset
-        type: stage
+        type: stage_header
         if: offset != 0
-  stage:
+  stage_header:
     seq:
       - id: score
         type: u4
@@ -102,4 +98,50 @@ types:
       - id: bombs
         type: u1
       - id: unknown_2
+        type: u1
+  userdata:
+    seq:
+      - id: magic
+        contents: USER
+      - id: size
+        type: u4
+      - id: unknown
+        size: 4
+      - id: name
+        type: userdata_field
+      - id: date
+        type: userdata_field
+      - id: shot
+        type: userdata_field
+      - id: score
+        type: userdata_field
+      - id: difficulty
+        type: userdata_field
+      - id: cleared
+        type: userdata_field
+      - id: misses
+        type: userdata_field
+      - id: bombs
+        type: userdata_field
+      - id: slowdown
+        type: userdata_field
+  crlfstring:
+    seq:
+      - id: value
+        type: str
+        terminator: 0xd
+        encoding: Shift_JIS
+      - id: term
+        type: u1
+  userdata_field:
+    seq:
+      - id: name
+        type: str
+        terminator: 0x09
+        encoding: Shift_JIS
+      - id: value
+        type: str
+        terminator: 0xd
+        encoding: Shift_JIS
+      - id: term
         type: u1
