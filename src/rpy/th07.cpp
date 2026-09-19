@@ -62,12 +62,13 @@ static void parse_replay_header(th07::Th07ReplayData* msg, const th07_t* body) {
 }
 
 static void parse_stage_header(th07::Th07ReplayData* msg, const th07_t* body) {
-    for (const auto sp : *body->stage_offsets()) {
-        const auto sh = sp->stage_header();
+    for (size_t i = 0; i < body->stage_offsets()->size(); i++) {
+        const auto sh = (*body->stage_offsets())[i]->stage_header();
         if (sh == nullptr)
             continue;
 
         th07::Th07StageData* stage_msg = msg->add_stages();
+        stage_msg->set_stage(static_cast<thdef::Stage>(i));
         stage_msg->set_score(sh->score() * 10);
         stage_msg->set_point_items(sh->point_items());
         stage_msg->set_graze(sh->graze());
