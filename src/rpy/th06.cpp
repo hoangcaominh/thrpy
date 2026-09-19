@@ -141,12 +141,13 @@ static void parse_replay_header_new_classic(th06::Th06ReplayData* msg, const voi
 
 static void parse_stage_header_original(th06::Th06ReplayData* msg, const void* data) {
     const th06_o_t* body = reinterpret_cast<const th06_o_t*>(data);
-    for (const auto sp : *body->stage_offsets()) {
-        const auto sh = sp->stage_header();
+    for (size_t i = 0; i < body->stage_offsets()->size(); i++) {
+        const auto sh = (*body->stage_offsets())[i]->stage_header();
         if (sh == nullptr)
             continue;
 
         th06::Th06StageData* stage_msg = msg->add_stages();
+        stage_msg->set_stage(static_cast<thdef::Stage>(i));
         stage_msg->set_score(sh->score());
         stage_msg->set_seed(sh->seed());
         stage_msg->set_lives(sh->lives());
@@ -158,12 +159,13 @@ static void parse_stage_header_original(th06::Th06ReplayData* msg, const void* d
 
 static void parse_stage_header_classic(th06::Th06ReplayData* msg, const void* data) {
     const th06_c_t* body = reinterpret_cast<const th06_c_t*>(data);
-    for (const auto sp : *body->stage_offsets()) {
-        const auto sh = sp->stage_header();
+    for (size_t i = 0; i < body->stage_offsets()->size(); i++) {
+        const auto sh = (*body->stage_offsets())[i]->stage_header();
         if (sh == nullptr)
             continue;
 
         th06::Th06StageData* stage_msg = msg->add_stages();
+        stage_msg->set_stage(static_cast<thdef::Stage>(i));
         stage_msg->set_score(sh->score());
         stage_msg->set_seed(sh->seed());
         stage_msg->set_lives(sh->lives());
@@ -175,12 +177,13 @@ static void parse_stage_header_classic(th06::Th06ReplayData* msg, const void* da
 
 static void parse_stage_header_new_classic(th06::Th06ReplayData* msg, const void* data) {
     const th06_nc_t* body = reinterpret_cast<const th06_nc_t*>(data);
-    for (const auto sp : *body->stage_offsets()) {
-        const auto sh = sp->stage_header();
+    for (size_t i = 0; i < body->stage_offsets()->size(); i++) {
+        const auto sh = (*body->stage_offsets())[i]->stage_header();
         if (sh == nullptr)
             continue;
 
         th06::Th06StageData* stage_msg = msg->add_stages();
+        stage_msg->set_stage(static_cast<thdef::Stage>(i));
         stage_msg->set_score(sh->score());
         stage_msg->set_seed(sh->seed());
         stage_msg->set_lives(sh->lives());

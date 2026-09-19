@@ -29,3 +29,13 @@ enum Difficulty {
     EXTRA = 4;
     PHANTASM = 5;
 }
+
+enum Stage {
+    STAGE_1 = 0;
+    STAGE_2 = 1;
+    STAGE_3 = 2;
+    STAGE_4 = 3;
+    STAGE_5 = 4;
+    STAGE_6 = 5;
+    STAGE_EX = 6;
+}

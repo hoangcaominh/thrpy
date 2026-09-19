@@ -30,10 +30,11 @@ message Th06ReplayData {
 }
 
 message Th06StageData {
-    uint64 score = 1;
-    uint32 seed = 2;
-    uint32 power = 3;
-    uint32 lives = 4;
-    uint32 bombs = 5;
-    uint32 rank = 6;
+    thdef.Stage stage = 1;
+    uint64 score = 2;
+    uint32 seed = 3;
+    uint32 power = 4;
+    uint32 lives = 5;
+    uint32 bombs = 6;
+    uint32 rank = 7;
 }
