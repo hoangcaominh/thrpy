@@ -215,10 +215,11 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
             return false;
     }
 
-    msg.set_game(thdef::GameId::TH06);
-    msg.set_version(version);
-    if (option != NULL && option->include_replay_header)
+    if (option != NULL && option->include_replay_header) {
+        msg.set_game(thdef::GameId::TH06);
+        msg.set_version(version);
         parse_replay_header(&msg, kd.body());
+    }
     if (option != NULL && option->include_stage_header)
         parse_stage_header(&msg, kd.body());
 
