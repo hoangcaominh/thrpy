@@ -41,6 +41,10 @@ seq:
     type: stage
     repeat: expr
     repeat-expr: num_stages
+instances:
+  userdata:
+    type: th_modern_userdata
+    pos: th_modern_header.userdata_offset
 types:
   stage:
     seq:
