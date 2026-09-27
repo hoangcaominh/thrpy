@@ -33,7 +33,9 @@ size_t unpack_thmodern(RpyBuf* buf, RpyModernKey* key1, RpyModernKey* key2) {
     );
     free(userdata);
 
-    buf->size = buf->size - comp_size + decomp_size;
+    size_t sizediff = decomp_size - comp_size;
+    *(uint32_t*)(buf->data + 0xC) += sizediff;
+    buf->size = buf->size + sizediff;
     return buf->size;
 }
 
@@ -55,6 +57,8 @@ size_t pack_thmodern(RpyBuf* buf, RpyModernKey* key1, RpyModernKey* key2) {
         buf->size - userdata_offset
     );
 
-    buf->size = buf->size - decomp_size + comp_size;
+    size_t sizediff = comp_size - decomp_size;
+    *(uint32_t*)(buf->data + 0xC) += sizediff;
+    buf->size = buf->size + sizediff;
     return buf->size;
 }
