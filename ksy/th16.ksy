@@ -2,45 +2,54 @@ meta:
   id: th16
   file-extension: raw
   endian: le
+  imports:
+    - th_modern_header
+    - th_modern_userdata
 seq:
-  - id: header
-    type: header
+  - id: magic
+    contents: t16r
+  - id: version
+    type: u4
+  - id: th_modern_header
+    type: th_modern_header
+  - id: name
+    type: str
+    size: 12
+    terminator: 0
+    encoding: Shift_JIS
+  - id: timestamp
+    type: u8
+  - id: score
+    type: u4
+  - id: unknown_1
+    size: 100
+  - id: slowdown
+    type: f4
+  - id: num_stages
+    type: u4
+  - id: shot
+    type: u4
+  - id: subshot_unused
+    type: u4
+  - id: difficulty
+    type: u4
+  - id: cleared
+    type: u4
+  - id: unknown_2
+    type: u4
+  - id: spell_practice_id
+    type: u4
+  - id: season
+    type: u4
   - id: stages
     type: stage
     repeat: expr
-    repeat-expr: header.stage_count
+    repeat-expr: num_stages
+instances:
+  userdata:
+    type: th_modern_userdata
+    pos: th_modern_header.userdata_offset
 types:
-  header:
-    seq:
-    - id: name
-      type: str
-      size: 12
-      terminator: 0
-      encoding: SJIS
-    - id: timestamp
-      type: u8
-    - id: score
-      type: u4
-    - id: unknown_1
-      size: 100
-    - id: slowdown
-      type: f4
-    - id: stage_count
-      type: u4
-    - id: shot
-      type: u4
-    - id: subshot_unused
-      type: u4
-    - id: difficulty
-      type: u4
-    - id: cleared
-      type: u4
-    - id: unknown_2
-      type: u4
-    - id: spell_practice_id
-      type: u4
-    - id: season
-      type: u4
   stage:
     seq:
     - id: stage_num
