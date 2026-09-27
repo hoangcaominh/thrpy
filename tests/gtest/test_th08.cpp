@@ -8,17 +8,17 @@ namespace {
 class TestTh08 : public TestRpy {};
 
 const char* REPLAYS[] = {
-    "th8_01",   // main game A
-    "th8_02",   // main game B
-    "th8_03",   // extra
-    "th8_04",   // stage practice
-    "th8_05",   // spell practice - last word
+    "th8_01.rpy",   // main game A
+    "th8_02.rpy",   // main game B
+    "th8_03.rpy",   // extra
+    "th8_04.rpy",   // stage practice
+    "th8_05.rpy",   // spell practice - last word
 };
 const size_t REPLAYS_SIZE = sizeof(REPLAYS) / sizeof(REPLAYS[0]);
 
 TEST_F(TestTh08, DetectTh08) {
     for (size_t i = 0; i < REPLAYS_SIZE; i++) {
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.rpy", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s", REPLAYS[i]);
         rpybuf_read(buf, path);
         EXPECT_EQ(rpybuf_detect(buf), TH08);
     }
@@ -27,9 +27,9 @@ TEST_F(TestTh08, DetectTh08) {
 TEST_F(TestTh08, UnpackTh08) {
     rpy_th08(rpy);
     for (size_t i = 0; i < REPLAYS_SIZE; i++) {
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.rpy", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s", REPLAYS[i]);
         rpybuf_read(buf, path);
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.rpx", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.raw", REPLAYS[i]);
         rpybuf_read(expected_buf, path);
         rpy_unpack(rpy, buf, buf);
         EXPECT_EQ(buf->size, expected_buf->size);
@@ -40,9 +40,9 @@ TEST_F(TestTh08, UnpackTh08) {
 TEST_F(TestTh08, PackTh08) {
     rpy_th08(rpy);
     for (size_t i = 0; i < REPLAYS_SIZE; i++) {
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.rpx", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.raw", REPLAYS[i]);
         rpybuf_read(buf, path);
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s.rpy", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th08/%s", REPLAYS[i]);
         rpybuf_read(expected_buf, path);
         rpy_pack(rpy, buf, buf);
         EXPECT_EQ(buf->size, expected_buf->size);

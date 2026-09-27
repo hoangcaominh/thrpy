@@ -8,14 +8,14 @@ namespace {
 class TestTh06 : public TestRpy {};
 
 const char* REPLAYS[] = {
-    "th6_01",   // main game
-    "th6_02",   // extra
+    "th6_01.rpy",   // main game
+    "th6_02.rpy",   // extra
 };
 const size_t REPLAYS_SIZE = sizeof(REPLAYS) / sizeof(REPLAYS[0]);
 
 TEST_F(TestTh06, DetectTh06) {
     for (size_t i = 0; i < REPLAYS_SIZE; i++) {
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s.rpy", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s", REPLAYS[i]);
         rpybuf_read(buf, path);
         EXPECT_EQ(rpybuf_detect(buf), TH06);
     }
@@ -24,9 +24,9 @@ TEST_F(TestTh06, DetectTh06) {
 TEST_F(TestTh06, UnpackTh06) {
     rpy_th06(rpy);
     for (size_t i = 0; i < REPLAYS_SIZE; i++) {
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s.rpy", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s", REPLAYS[i]);
         rpybuf_read(buf, path);
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s.rpx", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s.raw", REPLAYS[i]);
         rpybuf_read(expected_buf, path);
         rpy_unpack(rpy, buf, buf);
         EXPECT_EQ(buf->size, expected_buf->size);
@@ -37,9 +37,9 @@ TEST_F(TestTh06, UnpackTh06) {
 TEST_F(TestTh06, PackTh06) {
     rpy_th06(rpy);
     for (size_t i = 0; i < REPLAYS_SIZE; i++) {
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s.rpx", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s.raw", REPLAYS[i]);
         rpybuf_read(buf, path);
-        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s.rpy", REPLAYS[i]);
+        snprintf(path, sizeof(path), PROJECT_DIR "/samples/th06/%s", REPLAYS[i]);
         rpybuf_read(expected_buf, path);
         rpy_pack(rpy, buf, buf);
         EXPECT_EQ(buf->size, expected_buf->size);
