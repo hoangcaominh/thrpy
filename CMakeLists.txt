@@ -78,7 +78,7 @@ target_sources(
         src/rpy/th16.cpp
         src/rpy/th17.cpp
         src/rpy/th18.cpp
-        src/rpy/th20.c
+        src/rpy/th20.cpp
         ${KSY_GEN_SOURCE_LIST}
         proto/thdef.proto
         proto/th06.proto
@@ -94,6 +94,7 @@ target_sources(
         proto/th16.proto
         proto/th17.proto
         proto/th18.proto
+        proto/th20.proto
     PUBLIC
         include/thrpy.h
         include/rpy.h
