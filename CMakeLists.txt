@@ -69,7 +69,7 @@ target_sources(
         src/rpy/th07.cpp
         src/rpy/th08.cpp
         src/rpy/th10.cpp
-        src/rpy/th11.c
+        src/rpy/th11.cpp
         src/rpy/th12.c
         src/rpy/th128.c
         src/rpy/th13.c
@@ -85,6 +85,7 @@ target_sources(
         proto/th07.proto
         proto/th08.proto
         proto/th10.proto
+        proto/th11.proto
     PUBLIC
         include/thrpy.h
         include/rpy.h
