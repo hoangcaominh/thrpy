@@ -36,6 +36,7 @@ static void parse_stage_header(th11::ReplayData* msg, const th11_t* data) {
         th11::StageData* stage_msg = msg->add_stages();
         stage_msg->set_stage(static_cast<thdef::Stage>(s->stage_num() - 1));
         stage_msg->set_score(s->score() * 10);
+        stage_msg->set_graze(s->graze());
         stage_msg->set_piv(s->piv());
         stage_msg->set_power(s->power());
         stage_msg->set_lives(s->lives());
