@@ -4,7 +4,7 @@ meta:
 seq:
   - id: magic
     contents: USER
-  - id: size
+  - id: len_userdata
     type: u4
   - id: unknown
     size: 4
