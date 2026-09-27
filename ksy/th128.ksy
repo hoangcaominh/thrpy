@@ -2,47 +2,52 @@ meta:
   id: th128
   file-extension: raw
   endian: le
+  imports:
+    - th_modern_header
+    - th_modern_userdata
 seq:
-  - id: header
-    type: header
+  - id: magic
+    contents: 128r
+  - id: version
+    type: u4
+  - id: th_modern_header
+    type: th_modern_header
+  - id: name
+    type: str
+    size: 12
+    terminator: 0x0
+    encoding: Shift_JIS
+  - id: timestamp
+    type: u8
+  - id: score
+    type: u4
+  - id: unknown_1
+    size: 60
+  - id: slowdown
+    type: f4
+  - id: num_stages
+    type: u4
+  - id: route
+    type: u4
+  # ZUN never changes his replay formats...
+  - id: subshot_unused
+    type: u4
+  # If this is 4, then route must be 6
+  - id: difficulty
+    type: u4
+  # Also encodes the route, but encodes the clear status in addition to that
+  - id: cleared
+    type: u4
+  - id: unknown_2
+    size: 4
   - id: stages
     type: stage
     repeat: expr
-    repeat-expr: header.stagecount
+    repeat-expr: num_stages
 types:
-  header:
-    seq:
-      - id: name
-        type: str
-        size: 12
-        terminator: 0x0
-        encoding: SJIS
-      - id: timestamp
-        type: u8
-      - id: score
-        type: u4
-      - id: unknown_1
-        size: 60
-      - id: slowdown
-        type: f4
-      - id: stagecount
-        type: u4
-      - id: route
-        type: u4
-      # ZUN never changes his replay formats...
-      - id: subshot_unused
-        type: u4
-      # If this is 4, then route must be 6
-      - id: difficulty
-        type: u4
-      # Also encodes the route, but encodes the clear status in addition to that
-      - id: cleared
-        type: u4
-      - id: unknown_2
-        size: 4
   stage:
     seq:
-      - id: stage
+      - id: stage_num
         type: u2
       - id: seed
         type: u2

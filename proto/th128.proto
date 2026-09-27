@@ -1,0 +1,55 @@
+edition = "2023";
+package th128;
+
+import "thdef.proto";
+import "google/protobuf/timestamp.proto";
+
+enum Route {
+    A1 = 0;
+    A2 = 1;
+    B1 = 2;
+    B2 = 3;
+    C1 = 4;
+    C2 = 5;
+    EX = 6;
+}
+
+enum Stage {
+    S1_A = 0;
+    S2_A1 = 1;
+    S3_A1 = 2;
+    S2_A2 = 3;
+    S3_A2 = 4;
+    S1_B = 5;
+    S2_B1 = 6;
+    S3_B1 = 7;
+    S2_B2 = 8;
+    S3_B2 = 9;
+    S1_C = 10;
+    S2_C1 = 11;
+    S3_C1 = 12;
+    S2_C2 = 13;
+    S3_C2 = 14;
+    SEX = 15;
+}
+
+message ReplayData {
+    thdef.GameId game = 1;
+    uint32 version = 2;
+    thdef.Difficulty difficulty = 3;
+    Route route = 4;
+    uint64 score = 5;
+    google.protobuf.Timestamp timestamp = 6;
+    string name = 7;
+    float slowdown = 8;
+    repeated StageData stages = 100;
+}
+
+message StageData {
+    Stage stage = 1;
+    uint64 score = 2;
+    uint32 graze = 3;
+    uint32 motivation = 4;
+    uint32 perfect_freeze = 5;
+    uint32 frozen_area = 6;
+}

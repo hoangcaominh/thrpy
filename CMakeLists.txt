@@ -71,7 +71,7 @@ target_sources(
         src/rpy/th10.cpp
         src/rpy/th11.cpp
         src/rpy/th12.cpp
-        src/rpy/th128.c
+        src/rpy/th128.cpp
         src/rpy/th13.cpp
         src/rpy/th14.cpp
         src/rpy/th15.cpp
@@ -87,6 +87,7 @@ target_sources(
         proto/th10.proto
         proto/th11.proto
         proto/th12.proto
+        proto/th128.proto
         proto/th13.proto
         proto/th14.proto
         proto/th15.proto
