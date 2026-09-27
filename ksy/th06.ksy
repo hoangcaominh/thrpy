@@ -1,6 +1,6 @@
 meta:
   id: th06
-  file-extension: rpy
+  file-extension: raw
   endian: le
   bit-endian: le
   imports:

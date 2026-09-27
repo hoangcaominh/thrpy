@@ -1,6 +1,5 @@
 meta:
   id: th_modern_userdata_20
-  file-extension: rpy
   endian: le
 seq:
   - id: magic
