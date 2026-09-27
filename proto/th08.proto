@@ -36,7 +36,7 @@ enum Final {
     FINAL_B = 2;
 }
 
-message Th08ReplayData {
+message ReplayData {
     thdef.GameId game = 1;
     uint32 version = 2;
     Shot shot = 3;
@@ -46,10 +46,10 @@ message Th08ReplayData {
     string name = 7;
     float slowdown = 8;
     Final final = 9;
-    repeated Th08StageData stages = 100;
+    repeated StageData stages = 100;
 }
 
-message Th08StageData {
+message StageData {
     Stage stage = 1;
     uint64 score = 2;
     uint32 point_items = 3;

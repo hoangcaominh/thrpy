@@ -52,7 +52,7 @@ static size_t pack(RpyBuf* buf) {
     return buf->size;
 }
 
-static void parse_replay_header(th07::Th07ReplayData* msg, const th07_t* body) {
+static void parse_replay_header(th07::ReplayData* msg, const th07_t* body) {
     msg->set_shot(static_cast<th07::Shot>(body->shot()));
     msg->set_difficulty(static_cast<thdef::Difficulty>(body->difficulty()));
     msg->set_score(body->score() * 10);
@@ -61,13 +61,13 @@ static void parse_replay_header(th07::Th07ReplayData* msg, const th07_t* body) {
     msg->set_slowdown(body->slowdown());
 }
 
-static void parse_stage_header(th07::Th07ReplayData* msg, const th07_t* body) {
+static void parse_stage_header(th07::ReplayData* msg, const th07_t* body) {
     for (size_t i = 0; i < body->stage_offsets()->size(); i++) {
         const auto sh = (*body->stage_offsets())[i]->stage_header();
         if (sh == nullptr)
             continue;
 
-        th07::Th07StageData* stage_msg = msg->add_stages();
+        th07::StageData* stage_msg = msg->add_stages();
         stage_msg->set_stage(static_cast<thdef::Stage>(i));
         stage_msg->set_score(sh->score() * 10);
         stage_msg->set_point_items(sh->point_items());
@@ -86,7 +86,7 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     std::string s(reinterpret_cast<char*>(buf->data), buf->size);
     kaitai::kstream ks(s);
     th07_t kd(&ks);
-    th07::Th07ReplayData msg;
+    th07::ReplayData msg;
 
     if (option != NULL && option->include_replay_header) {
         msg.set_game(thdef::GameId::TH07);

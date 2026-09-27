@@ -109,7 +109,7 @@ static size_t pack(RpyBuf* buf) {
     return pack_fn(buf);
 }
 
-static void parse_replay_header_original(th06::Th06ReplayData* msg, const void* data) {
+static void parse_replay_header_original(th06::ReplayData* msg, const void* data) {
     const th06_o_t* body = reinterpret_cast<const th06_o_t*>(data);
     msg->set_date(body->date());
     msg->set_shot(static_cast<th06::Shot>(body->shot()));
@@ -119,7 +119,7 @@ static void parse_replay_header_original(th06::Th06ReplayData* msg, const void* 
     msg->set_slowdown(body->slowdown());
 }
 
-static void parse_replay_header_classic(th06::Th06ReplayData* msg, const void* data) {
+static void parse_replay_header_classic(th06::ReplayData* msg, const void* data) {
     const th06_c_t* body = reinterpret_cast<const th06_c_t*>(data);
     msg->set_date(body->date());
     msg->set_shot(static_cast<th06::Shot>(body->shot()));
@@ -129,7 +129,7 @@ static void parse_replay_header_classic(th06::Th06ReplayData* msg, const void* d
     msg->set_slowdown(body->slowdown());
 }
 
-static void parse_replay_header_new_classic(th06::Th06ReplayData* msg, const void* data) {
+static void parse_replay_header_new_classic(th06::ReplayData* msg, const void* data) {
     const th06_nc_t* body = reinterpret_cast<const th06_nc_t*>(data);
     msg->set_date(body->date());
     msg->set_shot(static_cast<th06::Shot>(body->shot()));
@@ -139,14 +139,14 @@ static void parse_replay_header_new_classic(th06::Th06ReplayData* msg, const voi
     msg->set_slowdown(body->slowdown());
 }
 
-static void parse_stage_header_original(th06::Th06ReplayData* msg, const void* data) {
+static void parse_stage_header_original(th06::ReplayData* msg, const void* data) {
     const th06_o_t* body = reinterpret_cast<const th06_o_t*>(data);
     for (size_t i = 0; i < body->stage_offsets()->size(); i++) {
         const auto sh = (*body->stage_offsets())[i]->stage_header();
         if (sh == nullptr)
             continue;
 
-        th06::Th06StageData* stage_msg = msg->add_stages();
+        th06::StageData* stage_msg = msg->add_stages();
         stage_msg->set_stage(static_cast<thdef::Stage>(i));
         stage_msg->set_score(sh->score());
         stage_msg->set_seed(sh->seed());
@@ -157,14 +157,14 @@ static void parse_stage_header_original(th06::Th06ReplayData* msg, const void* d
     }
 }
 
-static void parse_stage_header_classic(th06::Th06ReplayData* msg, const void* data) {
+static void parse_stage_header_classic(th06::ReplayData* msg, const void* data) {
     const th06_c_t* body = reinterpret_cast<const th06_c_t*>(data);
     for (size_t i = 0; i < body->stage_offsets()->size(); i++) {
         const auto sh = (*body->stage_offsets())[i]->stage_header();
         if (sh == nullptr)
             continue;
 
-        th06::Th06StageData* stage_msg = msg->add_stages();
+        th06::StageData* stage_msg = msg->add_stages();
         stage_msg->set_stage(static_cast<thdef::Stage>(i));
         stage_msg->set_score(sh->score());
         stage_msg->set_seed(sh->seed());
@@ -175,14 +175,14 @@ static void parse_stage_header_classic(th06::Th06ReplayData* msg, const void* da
     }
 }
 
-static void parse_stage_header_new_classic(th06::Th06ReplayData* msg, const void* data) {
+static void parse_stage_header_new_classic(th06::ReplayData* msg, const void* data) {
     const th06_nc_t* body = reinterpret_cast<const th06_nc_t*>(data);
     for (size_t i = 0; i < body->stage_offsets()->size(); i++) {
         const auto sh = (*body->stage_offsets())[i]->stage_header();
         if (sh == nullptr)
             continue;
 
-        th06::Th06StageData* stage_msg = msg->add_stages();
+        th06::StageData* stage_msg = msg->add_stages();
         stage_msg->set_stage(static_cast<thdef::Stage>(i));
         stage_msg->set_score(sh->score());
         stage_msg->set_seed(sh->seed());
@@ -196,9 +196,9 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     std::string s(reinterpret_cast<char*>(buf->data), buf->size);
     kaitai::kstream ks(s);
     th06_t kd(&ks);
-    th06::Th06ReplayData msg;
-    void (*parse_replay_header)(th06::Th06ReplayData*, const void*);
-    void (*parse_stage_header)(th06::Th06ReplayData*, const void*);
+    th06::ReplayData msg;
+    void (*parse_replay_header)(th06::ReplayData*, const void*);
+    void (*parse_stage_header)(th06::ReplayData*, const void*);
 
     th06::Version version = get_version(buf);
     switch (version) {

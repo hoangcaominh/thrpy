@@ -17,7 +17,7 @@ enum Shot {
     MARISAB = 3;
 }
 
-message Th06ReplayData {
+message ReplayData {
     thdef.GameId game = 1;
     Version version = 2;
     Shot shot = 3;
@@ -26,10 +26,10 @@ message Th06ReplayData {
     string date = 6;
     string name = 7;
     float slowdown = 8;
-    repeated Th06StageData stages = 100;
+    repeated StageData stages = 100;
 }
 
-message Th06StageData {
+message StageData {
     thdef.Stage stage = 1;
     uint64 score = 2;
     uint32 seed = 3;
