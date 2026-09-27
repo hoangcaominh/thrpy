@@ -2,41 +2,46 @@ meta:
   id: th12
   file-extension: raw
   endian: le
+  imports:
+    - th_modern_header
+    - th_modern_userdata
 seq:
-  - id: header
-    type: header
+  - id: magic
+    contents: t12r
+  - id: version
+    type: u4
+  - id: th_modern_header
+    type: th_modern_header
+  - id: name
+    type: str
+    size: 12
+    terminator: 0x0
+    encoding: Shift_JIS
+  - id: timestamp
+    type: u8
+  - id: score
+    type: u4
+  - id: unknown_1
+    size: 60
+  - id: slowdown
+    type: f4
+  - id: num_stages
+    type: u4
+  - id: shot
+    type: u4
+  - id: subshot
+    type: u4
+  - id: difficulty
+    type: u4
+  - id: cleared
+    type: u4
+  - id: unknown_2
+    type: u4
   - id: stages
     type: stage
     repeat: expr
-    repeat-expr: header.stagecount
+    repeat-expr: num_stages
 types:
-  header:
-    seq:
-      - id: name
-        type: str
-        size: 12
-        terminator: 0x0
-        encoding: SJIS
-      - id: timestamp
-        type: u8
-      - id: score
-        type: u4
-      - id: unknown_1
-        size: 60
-      - id: slowdown
-        type: f4
-      - id: stagecount
-        type: u4
-      - id: shot
-        type: u4
-      - id: subshot
-        type: u4
-      - id: difficulty
-        type: u4
-      - id: cleared
-        type: u4
-      - id: unknown_2
-        type: u4
   stage:
     seq:
       - id: stage_num
