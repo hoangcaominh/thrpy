@@ -15,6 +15,7 @@ seq:
   - id: name
     type: str
     size: 12
+    terminator: 0x0
     encoding: Shift_JIS
   - id: timestamp
     type: u4
