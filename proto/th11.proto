@@ -32,5 +32,5 @@ message StageData {
     uint32 piv = 4;
     uint32 power = 5;
     uint32 lives = 6;
-    uint32 live_pieces = 7;
+    uint32 life_pieces = 7;
 }

@@ -39,6 +39,7 @@ static void parse_stage_header(th11::ReplayData* msg, const th11_t* data) {
         stage_msg->set_piv(s->piv());
         stage_msg->set_power(s->power());
         stage_msg->set_lives(s->lives());
+        stage_msg->set_life_pieces(s->life_pieces());
     }
 }
 
