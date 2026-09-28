@@ -5,44 +5,71 @@
 #include <argp.h>
 #include <argz.h>
 
-#define OPT_PACK_NAME "pack"
-#define OPT_PACK_KEY 'z'
+#define OPT_NAME_PACK "pack"
+#define OPT_KEY_PACK 'z'
 
-#define OPT_UNPACK_NAME "unpack"
-#define OPT_UNPACK_KEY 'x'
+#define OPT_NAME_UNPACK "unpack"
+#define OPT_KEY_UNPACK 'x'
 
-#define OPT_OUTPUT_NAME "output"
-#define OPT_OUTPUT_KEY 'o'
+#define OPT_NAME_OUTPUT "output"
+#define OPT_KEY_OUTPUT 'o'
+
+#define OPT_NAME_INFO "info"
+#define OPT_KEY_INFO 'i'
+
+#define OPT_NAME_RAW "raw"
+#define OPT_KEY_RAW 'R'
 
 const char* argp_program_version = PROJECT_VERSION;
 
-const struct argp_option OPT_PACK = { OPT_PACK_NAME, OPT_PACK_KEY, NULL, 0, "Pack a replay." };
-const struct argp_option OPT_UNPACK = { OPT_UNPACK_NAME, OPT_UNPACK_KEY, NULL, 0, "Unpack a replay." };
-const struct argp_option OPT_OUTPUT = { OPT_OUTPUT_NAME, OPT_OUTPUT_KEY, "FILE", 0, "Output to file. Default to " DEFAULT_OUTPUT_NAME " in the current directory." };
+const struct argp_option OPT_PACK = { OPT_NAME_PACK, OPT_KEY_PACK, "FILE", 0, "Pack a replay. Ignores the R option." };
+const struct argp_option OPT_UNPACK = { OPT_NAME_UNPACK, OPT_KEY_UNPACK, "FILE", 0, "Unpack a replay. Does nothing when the R option is specified." };
+const struct argp_option OPT_OUTPUT = { OPT_NAME_OUTPUT, OPT_KEY_OUTPUT, "FILE", 0, "Output to file. Used when specifying the i option." };
+const struct argp_option OPT_INFO = { OPT_NAME_INFO, OPT_KEY_INFO, "INFO", 0, "Show information inside a replay. Prints to stdout by default. Available options are (r)eplay, (s)tage, and (i)nput." };
+const struct argp_option OPT_RAW = { OPT_NAME_RAW, OPT_KEY_RAW, NULL, 0, "Mark the input file as a raw replay. Used when specifying the i option." };
 
 struct thrpy_args {
-    char* outfile;
     char* argz;
     size_t argz_len;
-    int mode;
+    int pack_mode;
+    char* pack_outfile;
+    bool parse;
+    RpyParseOptions parse_opts;
+    bool is_raw;
 };
 
 static int parse_opt(int key, char* arg, struct argp_state* state) {
     struct thrpy_args* a = state->input;
 
     switch (key) {
-        case OPT_PACK_KEY:
-            if (a->mode)
+        case OPT_KEY_PACK:
+            if (a->pack_mode)
                 argp_failure(state, 1, 0, "cannot pack and unpack replay in the same command");
-            a->mode = key;
+            a->pack_mode = key;
+            a->pack_outfile = arg;
             break;
-        case OPT_UNPACK_KEY:
-            if (a->mode)
+        case OPT_KEY_UNPACK:
+            if (a->pack_mode)
                 argp_failure(state, 1, 0, "cannot pack and unpack replay in the same command");
-            a->mode = key;
+            a->pack_mode = key;
+            a->pack_outfile = arg;
             break;
-        case OPT_OUTPUT_KEY:
-            a->outfile = arg;
+        case OPT_KEY_OUTPUT:
+            a->parse_opts.outfile = arg;
+            break;
+        case OPT_KEY_INFO:
+            a->parse = true;
+            if (strcmp(arg, "r") == 0 || strcmp(arg, "replay") == 0)
+                a->parse_opts.include_replay_header = true;
+            else if (strcmp(arg, "s") == 0 || strcmp(arg, "stage") == 0)
+                a->parse_opts.include_stage_header = true;
+            else if (strcmp(arg, "i") == 0 || strcmp(arg, "input") == 0)
+                a->parse_opts.include_input_frames = true;
+            else
+                argp_failure(state, 1, 0, "unrecognized info option \"%s\"", arg);
+            break;
+        case OPT_KEY_RAW:
+            a->is_raw = true;
             break;
         case ARGP_KEY_INIT:
             a->argz = NULL;
@@ -86,16 +113,25 @@ int do_command(char* file, struct thrpy_args* thargs) {
         return 1;
     }
 
-    switch (thargs->mode) {
-        case 0:
-        case OPT_UNPACK_KEY:
+    if (!thargs->pack_mode && !thargs->parse) {
+        thargs->parse = true;
+        thargs->parse_opts.include_replay_header = true;
+    }
+
+    if (thargs->pack_mode == OPT_KEY_UNPACK && !thargs->is_raw) {
+        rpy_unpack(rpy, buf, buf);
+        rpybuf_write(buf, thargs->pack_outfile);
+    }
+
+    if (thargs->parse) {
+        if (!thargs->is_raw && thargs->pack_mode != OPT_KEY_UNPACK)
             rpy_unpack(rpy, buf, buf);
-            rpybuf_write(buf, thargs->outfile);
-            break;
-        case OPT_PACK_KEY:
-            rpy_pack(rpy, buf, buf);
-            rpybuf_write(buf, thargs->outfile);
-            break;
+        rpy_parse(rpy, buf, &thargs->parse_opts);
+    }
+
+    if (thargs->pack_mode == OPT_KEY_PACK) {
+        rpy_pack(rpy, buf, buf);
+        rpybuf_write(buf, thargs->pack_outfile);
     }
 
     goto ret;
@@ -112,6 +148,8 @@ int main(int argc, char* argv[]) {
         OPT_PACK,
         OPT_UNPACK,
         OPT_OUTPUT,
+        OPT_INFO,
+        OPT_RAW,
         { NULL },
     };
 
@@ -119,12 +157,13 @@ int main(int argc, char* argv[]) {
         opts,
         parse_opt,
         "FILE",
-        "Process Touhou Project replay file.\v"
-        "By default the program assumes the unpack option, therefore it is not required to specify -x or --unpack in the command."
+        "Process Touhou Project replay file."
     };
     struct thrpy_args thargs = {
-        .outfile = DEFAULT_OUTPUT_NAME,
-        .mode = 0,
+        .pack_mode = 0,
+        .parse = false,
+        .parse_opts.outfile = NULL,
+        .is_raw = false,
     };
 
     if (argp_parse(&argp, argc, argv, 0, NULL, &thargs) == 0) {
