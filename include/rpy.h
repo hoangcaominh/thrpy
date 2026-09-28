@@ -47,27 +47,6 @@ struct rpy {
     ThCode gamecode;
 };
 
-// const char* const TH_CODE_STR_TABLE[] = {
-//     "",
-//     "th06",
-//     "th07",
-//     "th08",
-//     "th09",
-//     "th10",
-//     "th11",
-//     "th12",
-//     "th128",
-//     "th13",
-//     "th14",
-//     "th15",
-//     "th16",
-//     "th17",
-//     "th18",
-//     "th20",
-// };
-
-// const size_t TH_CODE_STR_TABLE_LEN = sizeof(TH_CODE_STR_TABLE) / sizeof(*TH_CODE_STR_TABLE);
-
 #ifdef __cplusplus
 extern "C" {
 #endif
