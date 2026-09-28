@@ -1,6 +1,5 @@
 #include "rpy/th128.h"
-#include "rpy.h"
-#include "thmodern.h"
+#include "rpy/thmodern.h"
 #include <cstring>
 #include "kaitai/kaitaistream.h"
 #include "ksy/th128.h"

@@ -1,5 +1,5 @@
 #include "rpy/th20.h"
-#include "thmodern20.h"
+#include "rpy/thmodern20.h"
 #include <cstring>
 #include "kaitai/kaitaistream.h"
 #include "ksy/th20.h"

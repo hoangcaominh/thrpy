@@ -64,9 +64,7 @@ target_sources(
         src/msgutils.cpp
         src/msgutils.h
         src/rpy/thmodern.c
-        src/rpy/thmodern.h
         src/rpy/thmodern20.c
-        src/rpy/thmodern20.h
         src/rpy/th06.cpp
         src/rpy/th07.cpp
         src/rpy/th08.cpp
@@ -103,6 +101,8 @@ target_sources(
         include/detect.h
         include/crypt.h
         include/lzss.h
+        include/rpy/thmodern.h
+        include/rpy/thmodern20.h
         include/rpy/th06.h
         include/rpy/th07.h
         include/rpy/th08.h

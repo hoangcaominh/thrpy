@@ -1,4 +1,4 @@
-#include "thmodern.h"
+#include "rpy/thmodern.h"
 #include "crypt.h"
 #include "lzss.h"
 #include <stdio.h>
