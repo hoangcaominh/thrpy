@@ -61,6 +61,8 @@ target_sources(
         src/lzss.c
         src/bitstream.c
         src/bitstream.h
+        src/msgutils.cpp
+        src/msgutils.h
         src/rpy/thmodern.c
         src/rpy/thmodern.h
         src/rpy/thmodern20.c

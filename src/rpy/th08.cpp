@@ -6,8 +6,7 @@
 #include "ksy/th08.h"
 #include "proto/th08.pb.h"
 #include "proto/thdef.pb.h"
-#include <google/protobuf/util/json_util.h>
-#include <print>
+#include "msgutils.h"
 
 static const size_t KEY_OFFSET = 21;
 static const size_t CRYPT_OFFSET = 24;
@@ -138,15 +137,7 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     if (option != NULL && option->include_stage_header)
         parse_stage_header(&msg, &kd);
 
-    std::string res;
-    auto status = google::protobuf::util::MessageToJsonString(msg, &res);
-    if (!status.ok()) {
-        std::println("{}", status.message());
-        return false;
-    }
-
-    std::println("{}", res);
-    return true;
+    return msg_write(msg, option != nullptr ? option->outfile : nullptr);
 }
 
 void rpy_th08(Rpy* rpy) {

@@ -25,6 +25,7 @@ enum thcode {
 typedef enum thcode ThCode;
 
 struct rpy_parse_options {
+    char* outfile;
     bool include_replay_header;
     bool include_stage_header;
     bool include_input_frames;

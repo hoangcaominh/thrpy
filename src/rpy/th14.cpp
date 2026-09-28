@@ -6,8 +6,7 @@
 #include "proto/th14.pb.h"
 #include "proto/thdef.pb.h"
 #include <google/protobuf/timestamp.pb.h>
-#include <google/protobuf/util/json_util.h>
-#include <print>
+#include "msgutils.h"
 
 static RpyModernKey key1 = { 0x400, 0x5C, 0xE1 };
 static RpyModernKey key2 = { 0x100, 0x7D, 0x3A };
@@ -60,15 +59,7 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     if (option != NULL && option->include_stage_header)
         parse_stage_header(&msg, &kd);
 
-    std::string res;
-    auto status = google::protobuf::util::MessageToJsonString(msg, &res);
-    if (!status.ok()) {
-        std::println("{}", status.message());
-        return false;
-    }
-
-    std::println("{}", res);
-    return true;
+    return msg_write(msg, option != nullptr ? option->outfile : nullptr);
 }
 
 void rpy_th14(Rpy* rpy) {
