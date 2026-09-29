@@ -80,7 +80,7 @@ bool bitstream_reserve(struct bitstream* bs, size_t newsize) {
     if (!bs)
         return false;
 
-    void* data = reallocarray(bs->data, newsize, 1);
+    uint8_t* data = reallocarray(bs->data, newsize, 1);
     if (!data)
         return false;
 
