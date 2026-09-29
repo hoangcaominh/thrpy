@@ -6,7 +6,10 @@ This is a tool for unpacking, parsing data and repacking Touhou Project replay f
 Dependencies
 ---
 
-This project depends on [protobuf](https://github.com/protocolbuffers/protobuf) for serializing and deserializing parse results. Follow the [CMake installation guide](https://github.com/protocolbuffers/protobuf/blob/main/cmake/README.md) and build `protobuf` with flag `-Dprotobuf_BUILD_SHARED_LIBS=ON`, then drop the folder into `vendor` and rename it to `protobuf`. After that, you can configure CMake then build the project as usual.
+This project depends on [protobuf](https://github.com/protocolbuffers/protobuf) for serializing and deserializing parse results.
+Build `protobuf` with flag `-Dprotobuf_BUILD_SHARED_LIBS=ON` and install the library system-wide.
+Follow the [CMake installation guide](https://github.com/protocolbuffers/protobuf/blob/main/cmake/README.md) for more details.
+After that, you can configure CMake then build the project as usual.
 
 Support status
 ---
