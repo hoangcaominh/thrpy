@@ -6,6 +6,14 @@ endif()
 
 add_subdirectory(kaitai_struct_cpp_stl_runtime)
 
+if(WIN32)
+    target_compile_options(
+        kaitai_struct_cpp_stl_runtime PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/WX->
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-error>
+    )
+endif()
+
 add_library(vendor INTERFACE)
 target_link_libraries(
     vendor
