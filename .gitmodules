@@ -1,3 +1,6 @@
 [submodule "vendor/kaitai_struct_cpp_stl_runtime"]
 	path = vendor/kaitai_struct_cpp_stl_runtime
 	url = https://github.com/kaitai-io/kaitai_struct_cpp_stl_runtime.git
+[submodule "proto"]
+	path = proto
+	url = https://github.com/hoangcaominh/thrpy-proto.git
