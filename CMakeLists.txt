@@ -76,6 +76,7 @@ target_sources(
         src/rpy/th18.cpp
         src/rpy/th20.cpp
         ${KSY_GEN_SOURCE_LIST}
+        ${KSY_GEN_HEADER_LIST}
         proto/thdef.proto
         proto/th06.proto
         proto/th07.proto
@@ -113,7 +114,6 @@ target_sources(
         include/rpy/th17.h
         include/rpy/th18.h
         include/rpy/th20.h
-        ${KSY_GEN_HEADER_LIST}
 )
 protobuf_generate(
     TARGET ${PROJECT_NAME}
