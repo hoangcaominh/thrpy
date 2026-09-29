@@ -1,0 +1,112 @@
+name: CMake on multiple platforms
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  PROTOBUF_VERSION: v36.1
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release]
+        include:
+          - name: Linux x64
+            os: ubuntu-24.04
+            arch: ""
+            cache: linux-x64
+            c_compiler: gcc
+            cpp_compiler: g++
+          - name: Linux ARM64
+            os: ubuntu-24.04-arm
+            arch: ""
+            cache: linux-arm64
+            c_compiler: gcc
+            cpp_compiler: g++
+          - name: Windows x64
+            os: windows-2022
+            arch: "-A x64"
+            cache: windows-x64
+            c_compiler: cl
+            cpp_compiler: cl
+          - name: Windows x86
+            os: windows-2022
+            arch: "-A Win32"
+            cache: windows-x86
+            c_compiler: cl
+            cpp_compiler: cl
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Cache protobuf install
+      id: cache-protobuf
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/protobuf-prefix
+        key: protobuf-${{ env.PROTOBUF_VERSION }}-${{ matrix.cache }}
+
+    - name: Build and install protobuf
+      if: steps.cache-protobuf.outputs.cache-hit != 'true'
+      run: |
+        set -euxo pipefail
+        git clone --depth 1 --branch "$PROTOBUF_VERSION" https://github.com/protocolbuffers/protobuf.git protobuf-src
+        cmake -S protobuf-src -B protobuf-build \
+          ${{ matrix.arch }} \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/protobuf-prefix" \
+          -Dprotobuf_BUILD_SHARED_LIBS=ON \
+          -Dprotobuf_BUILD_TESTS=OFF
+        cmake --build protobuf-build --config Release --parallel
+        cmake --install protobuf-build --config Release
+
+    - name: Configure thrpy
+      run: >
+        cmake -S . -B build
+        ${{ matrix.arch }}
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/protobuf-prefix"
+        -Dthrpy_BUILD_TESTS=ON
+
+    - name: Build thrpy
+      run: |
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          export PATH="$PWD/protobuf-prefix/bin:$PATH"
+        fi
+        cmake --build build --config Release --parallel
+
+    - name: Test
+      run: |
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          export PATH="$PWD/build/Release:$PWD/protobuf-prefix/bin:$PATH"
+        elif [ "$RUNNER_OS" = "macOS" ]; then
+          export DYLD_LIBRARY_PATH="$PWD/protobuf-prefix/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
+        else
+          export LD_LIBRARY_PATH="$PWD/protobuf-prefix/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+        fi
+        ctest --test-dir build -C Release --output-on-failure
+
+    - name: Upload binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: thrpy-${{ matrix.cache }}
+        if-no-files-found: warn
+        path: |
+          build/thrpy
+          build/libthrpy.so
+          build/Release/thrpy.exe
+          build/Release/thrpy.dll
