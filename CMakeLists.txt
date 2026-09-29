@@ -16,10 +16,6 @@ configure_file(config.h.in "${GEN_DIR}/config.h")
 set(PROTO_GEN_DIR "${GEN_DIR}/proto")
 file(MAKE_DIRECTORY ${PROTO_GEN_DIR})
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/vendor")
-set(absl_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/protobuf/lib/cmake/absl")
-set(utf8_range_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/protobuf/lib/cmake/utf8_range")
-
 find_package(protobuf REQUIRED CONFIG)
 
 add_subdirectory(vendor)
