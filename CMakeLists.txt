@@ -148,3 +148,22 @@ target_link_libraries(
 if (thrpy_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
+
+# Install
+include(GNUInstallDirs)
+
+set_target_properties(
+    ${PROJECT_NAME} PROPERTIES
+    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+)
+set_target_properties(
+    ${TARGET_BIN} PROPERTIES
+    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+)
+
+install(
+    TARGETS ${TARGET_BIN} ${PROJECT_NAME}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
