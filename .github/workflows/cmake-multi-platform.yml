@@ -72,11 +72,7 @@ jobs:
         curl -sSL -o "$KSC_ZIP" \
           "https://github.com/kaitai-io/kaitai_struct_compiler/releases/download/${KAITAI_COMPILER_VERSION}/kaitai-struct-compiler-${KAITAI_COMPILER_VERSION}.zip"
         mkdir -p "$RUNNER_TEMP/ksc"
-        if [ "$RUNNER_OS" = "Windows" ]; then
-          tar -xf "$KSC_ZIP" -C "$RUNNER_TEMP/ksc"
-        else
-          unzip -q "$KSC_ZIP" -d "$RUNNER_TEMP/ksc"
-        fi
+        unzip -q "$KSC_ZIP" -d "$RUNNER_TEMP/ksc"
         echo "$RUNNER_TEMP/ksc/kaitai-struct-compiler-${KAITAI_COMPILER_VERSION}/bin" >> "$GITHUB_PATH"
 
     - name: Verify kaitai-struct-compiler
