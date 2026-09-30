@@ -19,7 +19,6 @@ file(MAKE_DIRECTORY ${PROTO_GEN_DIR})
 find_package(protobuf REQUIRED CONFIG)
 
 add_subdirectory(vendor)
-# add_subdirectory(ksy)
 
 # kaitai-struct-cpp
 set(KSY_SOURCE_DIR "${CMAKE_SOURCE_DIR}/ksy")
@@ -29,6 +28,14 @@ file(MAKE_DIRECTORY ${KSY_GEN_DIR})
 file(GLOB KSY_FILES ${KSY_SOURCE_DIR}/*.ksy)
 set(KSY_GEN_HEADER_LIST)
 set(KSY_GEN_SOURCE_LIST)
+
+# kaitai-struct-compiler is a .bat file on Windows
+if(WIN32)
+    set(KSY_COMPILER_CMD cmd /c call kaitai-struct-compiler.bat)
+else()
+    set(KSY_COMPILER_CMD kaitai-struct-compiler)
+endif()
+
 foreach(KSY_FILE ${KSY_FILES})
     get_filename_component(KSY_BASENAME ${KSY_FILE} NAME_WE)
     set(KSY_GEN_HEADER "${KSY_GEN_DIR}/${KSY_BASENAME}.h")
@@ -37,7 +44,7 @@ foreach(KSY_FILE ${KSY_FILES})
     add_custom_command(
         WORKING_DIRECTORY ${KSY_GEN_DIR}
         OUTPUT ${KSY_GEN_HEADER} ${KSY_GEN_SOURCE}
-        COMMAND kaitai-struct-compiler -t cpp_stl ${KSY_FILE}
+        COMMAND ${KSY_COMPILER_CMD} -t cpp_stl ${KSY_FILE}
     )
 
     list(APPEND KSY_GEN_HEADER_LIST ${KSY_GEN_HEADER})
@@ -50,7 +57,6 @@ add_library(${PROJECT_NAME})
 target_sources(
     ${PROJECT_NAME}
     PRIVATE
-        # src/main.c
         src/rpy.c
         src/detect.c
         src/crypt.c
