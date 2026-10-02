@@ -94,7 +94,6 @@ jobs:
           ${{ matrix.arch }} \
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/protobuf-prefix" \
-          -Dprotobuf_BUILD_SHARED_LIBS=ON \
           -Dprotobuf_BUILD_TESTS=OFF
         cmake --build protobuf-build --config Release --parallel
         cmake --install protobuf-build --config Release
