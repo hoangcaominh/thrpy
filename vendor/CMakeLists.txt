@@ -1,4 +1,5 @@
-set(BUILD_TESTS OFF CACHE BOOL "Disable test build")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static library for kaitai struct")
+set(BUILD_TESTS OFF CACHE BOOL "Disable test build for kaitai struct")
 
 if(WIN32)
     set(STRING_ENCODING_TYPE "WIN32API" CACHE STRING "Set the way strings have to be encoded (ICONV|WIN32API|NONE|...)")

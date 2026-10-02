@@ -7,7 +7,7 @@ Dependencies
 ---
 
 This project depends on [protobuf](https://github.com/protocolbuffers/protobuf) for serializing and deserializing parse results.
-Build `protobuf` with flag `-Dprotobuf_BUILD_SHARED_LIBS=ON` and install the library system-wide.
+Build `protobuf` and install the library before building this project.
 Follow the [CMake installation guide](https://github.com/protocolbuffers/protobuf/blob/main/cmake/README.md) for more details.
 
 How to build
