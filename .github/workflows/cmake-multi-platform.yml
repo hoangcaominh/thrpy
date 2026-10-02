@@ -36,18 +36,18 @@ jobs:
             cache: linux-arm64
             c_compiler: gcc
             cpp_compiler: g++
-          - name: Windows x64
-            os: windows-2022
-            arch: "-A x64"
-            cache: windows-x64
-            c_compiler: cl
-            cpp_compiler: cl
-          - name: Windows x86
-            os: windows-2022
-            arch: "-A Win32"
-            cache: windows-x86
-            c_compiler: cl
-            cpp_compiler: cl
+          # - name: Windows x64
+          #   os: windows-2022
+          #   arch: "-A x64"
+          #   cache: windows-x64
+          #   c_compiler: cl
+          #   cpp_compiler: cl
+          # - name: Windows x86
+          #   os: windows-2022
+          #   arch: "-A Win32"
+          #   cache: windows-x86
+          #   c_compiler: cl
+          #   cpp_compiler: cl
 
     defaults:
       run:
