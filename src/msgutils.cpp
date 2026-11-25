@@ -1,7 +1,7 @@
 #include "msgutils.h"
 #include <google/protobuf/util/json_util.h>
 #include <fstream>
-#include <print>
+#include <cstdio>
 #include <string>
 
 bool msg_write(const google::protobuf::Message& msg, const char* outfile) {
@@ -9,21 +9,22 @@ bool msg_write(const google::protobuf::Message& msg, const char* outfile) {
         std::string json;
         auto status = google::protobuf::util::MessageToJsonString(msg, &json);
         if (!status.ok()) {
-            std::println(stderr, "{}", status.message());
+            std::string s{status.message()};
+            fprintf(stderr, "%s\n", s.c_str());
             return false;
         }
 
-        std::println("{}", json);
+        printf("%s\n", json.c_str());
         return true;
     }
 
     std::ofstream ofs(outfile, std::ios::binary | std::ios::trunc);
     if (!ofs) {
-        std::println(stderr, "Unable to open {} for writing.", outfile);
+        fprintf(stderr, "Unable to open %s for writing.\n", outfile);
         return false;
     }
     if (!msg.SerializeToOstream(&ofs)) {
-        std::println(stderr, "Unable to write message to {}.", outfile);
+        fprintf(stderr, "Unable to write message to %s.\n", outfile);
         return false;
     }
     return true;
