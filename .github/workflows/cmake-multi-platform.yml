@@ -12,12 +12,14 @@ env:
 
 jobs:
   build:
+    name: build (${{ matrix.name }}, ${{ matrix.build_type }})
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         build_type: [Release]
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
         include:
           - name: Linux x64
             os: ubuntu-24.04
