@@ -136,6 +136,7 @@ static void parse_replay_header_new_classic(th06::ReplayData* msg, const void* d
     msg->set_score(body->score());
     msg->set_name(body->name());
     msg->set_slowdown(body->slowdown());
+    msg->set_mode(static_cast<th06::Mode>(body->mode()));
 }
 
 static void parse_stage_header_original(th06::ReplayData* msg, const void* data) {
