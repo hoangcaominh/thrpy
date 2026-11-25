@@ -21,12 +21,12 @@ Follow the [CMake installation guide](https://github.com/protocolbuffers/protobu
 How to build and install
 ---
 
-**NOTE**: If you have `protobuf` installed system-wide instead of using the installation prefix as instructed by the guide, drop the `-Dprotobuf_INSTALL_PREFIX` flag in the command.
+**NOTE**: If you have `protobuf` installed system-wide instead of using the installation prefix as instructed by the guide, drop the `-DCMAKE_PREFIX_PATH` flag in the command.
 
 Clone this repository, then clone all submodules by running `git submodule update --init`, or drop `--init` to update existing submodules.
 Make sure that `kaitai-struct-compiler` and `protobuf` is installed on the system, then run the following commands to install the executable.
 ```sh
-cmake -S . -B build -Dprotobuf_INSTALL_PREFIX=<absolute path to your protobuf location>
+cmake -S . -B build -DCMAKE_PREFIX_PATH=<absolute path to your protobuf location>
 
 cmake --build build
 

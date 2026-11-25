@@ -16,9 +16,6 @@ configure_file(config.h.in "${GEN_DIR}/config.h")
 set(PROTO_GEN_DIR "${GEN_DIR}/proto")
 file(MAKE_DIRECTORY ${PROTO_GEN_DIR})
 
-if (protobuf_INSTALL_PREFIX)
-    list(APPEND CMAKE_PREFIX_PATH "${protobuf_INSTALL_PREFIX}")
-endif()
 find_package(protobuf REQUIRED CONFIG)
 
 add_subdirectory(vendor)
