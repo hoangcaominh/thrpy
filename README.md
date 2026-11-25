@@ -2,24 +2,45 @@ Thrpy
 ===
 
 This is a tool for unpacking, parsing data and repacking Touhou Project replay files.
+This tool currently runs on Unix-based operating system only.
 
 Dependencies
 ---
 
-This project depends on [protobuf](https://github.com/protocolbuffers/protobuf) for serializing and deserializing parse results.
-Build `protobuf` and install the library before building this project.
+### kaitai-struct-compiler
+
+This project depends on [Kaitai Struct](https://kaitai.io/) for reading binary files in multiple programming languages.
+[Download and install the compiler](https://kaitai.io/#download) in the system before building this project.
+
+### Protobuf
+
+This project depends on [protobuf](https://protobuf.dev/) for serializing and deserializing parse results.
+Clone the [repository](https://github.com/protocolbuffers/protobuf) to the system, then build and install the library before building this project.
 Follow the [CMake installation guide](https://github.com/protocolbuffers/protobuf/blob/main/cmake/README.md) for more details.
 
-How to build
+How to build and install
 ---
 
-Clone all submodules by running `git submodule update --init`, or drop `--init` to update existing submodules.
-Verify that `protobuf` is installed on the system, then run the following commands to install the executable.
+**NOTE**: If you have `protobuf` installed system-wide instead of using the installation prefix as instructed by the guide, drop the `-Dprotobuf_INSTALL_PREFIX` flag in the command.
+
+Clone this repository, then clone all submodules by running `git submodule update --init`, or drop `--init` to update existing submodules.
+Make sure that `kaitai-struct-compiler` and `protobuf` is installed on the system, then run the following commands to install the executable.
 ```sh
-cmake -S . -B build
+cmake -S . -B build -Dprotobuf_INSTALL_PREFIX=<absolute path to your protobuf location>
+
 cmake --build build
+
 sudo cmake --install build
 ```
+
+Integrate the program with your project
+---
+
+You can pass the parse results produced by the program and interpret them in your project using `protobuf` and the compiled `proto` files in your preferred language.
+Please refer to the guide or tutorial of `protobuf` for that language.
+
+`proto` files for this project are located in the folder with the same name.
+
 
 Support status
 ---
