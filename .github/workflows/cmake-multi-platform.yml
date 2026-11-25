@@ -90,7 +90,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/protobuf-prefix" \
           -Dprotobuf_BUILD_TESTS=OFF
-        cmake --build protobuf-build --config Release --parallel
+        cmake --build protobuf-build --config Release --parallel 4
         cmake --install protobuf-build --config Release
 
     - name: Configure thrpy
@@ -106,7 +106,7 @@ jobs:
         if [ "$RUNNER_OS" = "Windows" ]; then
           export PATH="$PWD/protobuf-prefix/bin:$PATH"
         fi
-        cmake --build build --config Release --parallel
+        cmake --build build --config Release --parallel 4
 
     - name: Test
       if: false
