@@ -23,14 +23,14 @@ jobs:
             os: ubuntu-24.04
             arch: ""
             cache: linux-x64
-            c_compiler: gcc-14
-            cpp_compiler: g++-14
+            c_compiler: gcc
+            cpp_compiler: g++
           - name: Linux ARM64
             os: ubuntu-24.04-arm
             arch: ""
             cache: linux-arm64
-            c_compiler: gcc-14
-            cpp_compiler: g++-14
+            c_compiler: gcc
+            cpp_compiler: g++
           # - name: Windows x64
           #   os: windows-2022
           #   arch: "-A x64"
