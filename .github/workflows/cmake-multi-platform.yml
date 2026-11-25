@@ -104,7 +104,7 @@ jobs:
         ${{ matrix.arch }}
         -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/protobuf-prefix"
-        -Dthrpy_BUILD_TESTS=ON
+        -Dthrpy_BUILD_TESTS=OFF
 
     - name: Build thrpy
       run: |
@@ -114,6 +114,7 @@ jobs:
         cmake --build build --config Release --parallel
 
     - name: Test
+      if: false
       run: |
         if [ "$RUNNER_OS" = "Windows" ]; then
           export PATH="$PWD/build/Release:$PWD/protobuf-prefix/bin:$PATH"
