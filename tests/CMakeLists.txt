@@ -17,6 +17,7 @@ add_executable(
     ${TARGET_TEST}
     gtest/helper.h
     gtest/test_th06.cpp
+    gtest/test_th06nc.cpp
     gtest/test_th07.cpp
     gtest/test_th08.cpp
     gtest/test_th10.cpp
