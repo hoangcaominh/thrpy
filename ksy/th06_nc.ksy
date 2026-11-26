@@ -4,10 +4,15 @@ meta:
 seq:
   - id: mode
     type: u1
+    enum: mode
   - id: shot
     type: u1
   - id: difficulty
     type: u1
+    if: mode != mode::spell_practice
+  - id: spell_card_id
+    type: u1
+    if: mode == mode::spell_practice
   - id: padding
     size: 3
   - id: unknown_1
@@ -42,6 +47,11 @@ seq:
     type: stage_pointer
     repeat: expr
     repeat-expr: 7
+enums:
+  mode:
+    0: standard
+    1: challenge
+    3: spell_practice
 types:
   stage_pointer:
     seq:

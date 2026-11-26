@@ -132,11 +132,15 @@ static void parse_replay_header_new_classic(th06::ReplayData* msg, const void* d
     const th06_nc_t* body = reinterpret_cast<const th06_nc_t*>(data);
     msg->set_date(body->date());
     msg->set_shot(static_cast<th06::Shot>(body->shot()));
-    msg->set_difficulty(static_cast<thdef::Difficulty>(body->difficulty()));
+    th06::Mode mode = static_cast<th06::Mode>(body->mode());
+    if (mode == th06::Mode::MODE_SPELL_PRACTICE)
+        msg->set_spell_card_id(body->spell_card_id());
+    else
+        msg->set_difficulty(static_cast<thdef::Difficulty>(body->difficulty()));
+    msg->set_mode(mode);
     msg->set_score(body->score());
     msg->set_name(body->name());
     msg->set_slowdown(body->slowdown());
-    msg->set_mode(static_cast<th06::Mode>(body->mode()));
 }
 
 static void parse_stage_header_original(th06::ReplayData* msg, const void* data) {
