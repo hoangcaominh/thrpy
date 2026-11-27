@@ -21,25 +21,24 @@ Follow the [CMake installation guide](https://github.com/protocolbuffers/protobu
 How to build and install
 ---
 
-**NOTE**: If you have `protobuf` installed system-wide instead of using the installation prefix as instructed by the guide, drop the `-DCMAKE_PREFIX_PATH` flag in the command.
+**NOTE**: If you have protobuf installed system-wide instead of using the installation prefix as instructed by the guide, drop the `-DCMAKE_PREFIX_PATH` flag in the command.
 
-Clone this repository, then clone all submodules by running `git submodule update --init`, or drop `--init` to update existing submodules.
-Make sure that `kaitai-struct-compiler` and `protobuf` is installed on the system, then run the following commands to install the executable.
+Clone this repository, make sure that kaitai-struct-compiler and protobuf are installed on the system, then run the following commands to build and install the executable.
 ```sh
 cmake -S . -B build -DCMAKE_PREFIX_PATH=<absolute path to your protobuf location>
 
 cmake --build build
 
-sudo cmake --install build
+cmake --install build
 ```
 
 Integrate the program with your project
 ---
 
-You can pass the parse results produced by the program and interpret them in your project using `protobuf` and the compiled `proto` files in your preferred language.
-Please refer to the guide or tutorial of `protobuf` for that language.
+You can pass the parse results produced by the program in your project using protobuf and the compiled proto files in your preferred language.
+Please refer to the guide or tutorial of protobuf for said language.
 
-`proto` files for this project are located in the folder with the same name.
+Proto files used in this project can be found [here](https://github.com/hoangcaominh/thrpy-proto).
 
 
 Support status
