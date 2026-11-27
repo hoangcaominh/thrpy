@@ -5,6 +5,7 @@
 #include "ksy/th18.h"
 #include "proto/th18.pb.h"
 #include "proto/thdef.pb.h"
+#include "proto/parse_result.pb.h"
 #include <google/protobuf/timestamp.pb.h>
 #include "msgutils.h"
 
@@ -54,15 +55,19 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     th18_t kd(&ks);
     th18::ReplayData msg;
 
-    if (option != NULL && option->include_replay_header) {
+    if (option != nullptr && option->include_replay_header) {
         msg.set_game(thdef::GameId::TH18);
         msg.set_version(kd.version());
         parse_replay_header(&msg, &kd);
     }
-    if (option != NULL && option->include_stage_header)
+    if (option != nullptr && option->include_stage_header)
         parse_stage_header(&msg, &kd);
 
-    return msg_write(msg, option != nullptr ? option->outfile : nullptr);
+    ParseResult res;
+    res.set_allocated_result18(&msg);
+    bool success = msg_write(res, option != nullptr ? option->outfile : nullptr);
+    msg = *res.release_result18();
+    return success;
 }
 
 void rpy_th18(Rpy* rpy) {

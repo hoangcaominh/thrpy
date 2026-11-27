@@ -4,6 +4,7 @@
 #include "ksy/th06.h"
 #include "proto/th06.pb.h"
 #include "proto/thdef.pb.h"
+#include "proto/parse_result.pb.h"
 #include "msgutils.h"
 
 using namespace thrpy;
@@ -224,15 +225,19 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
             return false;
     }
 
-    if (option != NULL && option->include_replay_header) {
+    if (option != nullptr && option->include_replay_header) {
         msg.set_game(thdef::GameId::TH06);
         msg.set_version(version);
         parse_replay_header(&msg, kd.body());
     }
-    if (option != NULL && option->include_stage_header)
+    if (option != nullptr && option->include_stage_header)
         parse_stage_header(&msg, kd.body());
 
-    return msg_write(msg, option != nullptr ? option->outfile : nullptr);
+    ParseResult res;
+    res.set_allocated_result06(&msg);
+    bool success = msg_write(res, option != nullptr ? option->outfile : nullptr);
+    msg = *res.release_result06();
+    return success;
 }
 
 void rpy_th06(Rpy* rpy) {
