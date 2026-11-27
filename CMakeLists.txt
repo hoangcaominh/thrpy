@@ -1,24 +1,43 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(thrpy VERSION 0.0.1)
 
-set(GEN_DIR "${CMAKE_BINARY_DIR}/generated")
-file(MAKE_DIRECTORY ${GEN_DIR})
-
-# Options
-option(thrpy_BUILD_TESTS "Build tests" OFF)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-configure_file(config.h.in "${GEN_DIR}/config.h")
+# Download and configure dependencies
+set(THRPY_DEPENDENCIES)
+include(FetchContent)
+FetchContent_Declare(
+    thrpy_proto
+    GIT_REPOSITORY  https://github.com/hoangcaominh/thrpy-proto.git
+    GIT_TAG         7ce02ff4c69e4faed61ba929180203f803106688
+)
+list(APPEND THRPY_DEPENDENCIES thrpy_proto)
+
+FetchContent_Declare(
+    kaitai_struct_cpp_stl_runtime
+    GIT_REPOSITORY  https://github.com/kaitai-io/kaitai_struct_cpp_stl_runtime.git
+    GIT_TAG         c7009877d4b0ca804442e796c996eb4501f3203d # v0.11
+)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static library for kaitai struct")
+set(BUILD_TESTS OFF CACHE BOOL "Disable test build for kaitai struct")
+if(WIN32)
+    set(STRING_ENCODING_TYPE "WIN32API" CACHE STRING "Set the way strings have to be encoded (ICONV|WIN32API|NONE|...)")
+endif()
+list(APPEND THRPY_DEPENDENCIES kaitai_struct_cpp_stl_runtime)
+
+FetchContent_MakeAvailable(${THRPY_DEPENDENCIES})
+
+set(GEN_DIR "${CMAKE_BINARY_DIR}/generated")
+file(MAKE_DIRECTORY ${GEN_DIR})
 
 # protobuf
+file(GLOB PROTO_FILES ${thrpy_proto_SOURCE_DIR}/*.proto)
+
 set(PROTO_GEN_DIR "${GEN_DIR}/proto")
 file(MAKE_DIRECTORY ${PROTO_GEN_DIR})
 
 find_package(protobuf REQUIRED CONFIG)
-
-add_subdirectory(vendor)
 
 # kaitai-struct-cpp
 set(KSY_SOURCE_DIR "${CMAKE_SOURCE_DIR}/ksy")
@@ -52,6 +71,10 @@ foreach(KSY_FILE ${KSY_FILES})
 endforeach()
 
 # thrpy library
+option(thrpy_BUILD_TESTS "Build tests" OFF)
+
+configure_file(config.h.in "${GEN_DIR}/config.h")
+
 add_library(${PROJECT_NAME})
 
 target_sources(
@@ -83,21 +106,7 @@ target_sources(
         src/rpy/th20.cpp
         ${KSY_GEN_SOURCE_LIST}
         ${KSY_GEN_HEADER_LIST}
-        proto/thdef.proto
-        proto/th06.proto
-        proto/th07.proto
-        proto/th08.proto
-        proto/th10.proto
-        proto/th11.proto
-        proto/th12.proto
-        proto/th128.proto
-        proto/th13.proto
-        proto/th14.proto
-        proto/th15.proto
-        proto/th16.proto
-        proto/th17.proto
-        proto/th18.proto
-        proto/th20.proto
+        ${PROTO_FILES}
     PUBLIC
         include/thrpy.h
         include/rpy.h
@@ -124,7 +133,7 @@ target_sources(
 protobuf_generate(
     TARGET ${PROJECT_NAME}
     LANGUAGE cpp
-    IMPORT_DIRS "${CMAKE_SOURCE_DIR}/proto"
+    IMPORT_DIRS "${thrpy_proto_SOURCE_DIR}"
     PROTOC_OUT_DIR ${PROTO_GEN_DIR}
 )
 target_include_directories(
@@ -134,7 +143,9 @@ target_include_directories(
 )
 target_link_libraries(
     ${PROJECT_NAME}
-    PRIVATE vendor
+    PRIVATE
+        kaitai_struct_cpp_stl_runtime
+        protobuf::libprotobuf
 )
 
 # Executable
