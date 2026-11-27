@@ -10,7 +10,7 @@ include(FetchContent)
 FetchContent_Declare(
     thrpy_proto
     GIT_REPOSITORY  https://github.com/hoangcaominh/thrpy-proto.git
-    GIT_TAG         7ce02ff4c69e4faed61ba929180203f803106688
+    GIT_TAG         f5102b93d4da570f60b119a73ea7623195e9586e
 )
 list(APPEND THRPY_DEPENDENCIES thrpy_proto)
 
