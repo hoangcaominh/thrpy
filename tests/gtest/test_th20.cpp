@@ -10,6 +10,7 @@ class TestTh20 : public TestRpy {};
 const char* REPLAYS[] = {
     "th20_01.rpy",   // main game
     "th20_02.rpy",   // extra
+    "th20_03.rpy",   // unique stones
 };
 const size_t REPLAYS_SIZE = sizeof(REPLAYS) / sizeof(REPLAYS[0]);
 

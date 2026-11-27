@@ -10,6 +10,7 @@ class TestTh18 : public TestRpy {};
 const char* REPLAYS[] = {
     "th18_01.rpy",   // main game
     "th18_02.rpy",   // extra
+    "th18_03.rpy",   // spell practice
 };
 const size_t REPLAYS_SIZE = sizeof(REPLAYS) / sizeof(REPLAYS[0]);
 
