@@ -119,7 +119,7 @@ jobs:
         else
           export LD_LIBRARY_PATH="$PWD/protobuf-prefix/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
         fi
-        ctest --test-dir build -C Release --output-on-failure
+        ctest --test-dir build/tests -C Release --output-on-failure
 
     - name: Upload binaries
       uses: actions/upload-artifact@v7
