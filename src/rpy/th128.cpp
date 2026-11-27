@@ -8,6 +8,8 @@
 #include <google/protobuf/timestamp.pb.h>
 #include "msgutils.h"
 
+using namespace thrpy;
+
 static RpyModernKey key1 = { 0x800, 0x5E, 0xE7 };
 static RpyModernKey key2 = { 0x80, 0x7D, 0x36 };
 
@@ -55,6 +57,7 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     }
     if (option != NULL && option->include_stage_header)
         parse_stage_header(&msg, &kd);
+
 
     return msg_write(msg, option != nullptr ? option->outfile : nullptr);
 }

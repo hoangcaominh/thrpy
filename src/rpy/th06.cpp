@@ -6,6 +6,8 @@
 #include "proto/thdef.pb.h"
 #include "msgutils.h"
 
+using namespace thrpy;
+
 static const size_t KEY_OFFSET = 14;
 static const size_t CRYPT_OFFSET = 15;
 static const size_t KEY_OFFSET_NC = 0x12;

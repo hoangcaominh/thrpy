@@ -8,6 +8,8 @@
 #include <google/protobuf/timestamp.pb.h>
 #include "msgutils.h"
 
+using namespace thrpy;
+
 static RpyModernKey key1 = { 0x400, 0x5C, 0xE1 };
 static RpyModernKey key2 = { 0x100, 0x7D, 0x3A };
 
