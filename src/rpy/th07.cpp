@@ -7,6 +7,7 @@
 #include "proto/thdef.pb.h"
 #include "proto/parse_result.pb.h"
 #include "msgutils.h"
+#include <google/protobuf/timestamp.pb.h>
 
 using namespace thrpy;
 
@@ -54,11 +55,18 @@ static size_t pack(RpyBuf* buf) {
     return buf->size;
 }
 
+static void set_date(th07::ReplayData* msg, const std::string& date) {
+    google::protobuf::Timestamp* t = new google::protobuf::Timestamp(
+        date_to_timestamp(date, "%m/%d")
+    );
+    msg->set_allocated_timestamp(t);
+}
+
 static void parse_replay_header(th07::ReplayData* msg, const th07_t* body) {
     msg->set_shot(static_cast<th07::Shot>(body->shot()));
     msg->set_difficulty(static_cast<thdef::Difficulty>(body->difficulty()));
     msg->set_score(body->score() * 10);
-    msg->set_date(body->date());
+    set_date(msg, body->date());
     msg->set_name(body->name());
     msg->set_slowdown(body->slowdown());
 }
