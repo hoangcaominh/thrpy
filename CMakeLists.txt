@@ -94,6 +94,7 @@ target_sources(
         src/rpy/th06.cpp
         src/rpy/th07.cpp
         src/rpy/th08.cpp
+        src/rpy/th09.cpp
         src/rpy/th10.cpp
         src/rpy/th11.cpp
         src/rpy/th12.cpp
@@ -119,6 +120,7 @@ target_sources(
         include/rpy/th06.h
         include/rpy/th07.h
         include/rpy/th08.h
+        include/rpy/th09.h
         include/rpy/th10.h
         include/rpy/th11.h
         include/rpy/th12.h
