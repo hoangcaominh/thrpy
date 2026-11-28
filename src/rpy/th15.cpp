@@ -5,8 +5,11 @@
 #include "ksy/th15.h"
 #include "proto/th15.pb.h"
 #include "proto/thdef.pb.h"
+#include "proto/parse_result.pb.h"
 #include <google/protobuf/timestamp.pb.h>
 #include "msgutils.h"
+
+using namespace thrpy;
 
 static RpyModernKey key1 = { 0x400, 0x5C, 0xE1 };
 static RpyModernKey key2 = { 0x100, 0x7D, 0x3A };
@@ -51,15 +54,19 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     th15_t kd(&ks);
     th15::ReplayData msg;
 
-    if (option != NULL && option->include_replay_header) {
+    if (option != nullptr && option->include_replay_header) {
         msg.set_game(thdef::GameId::TH15);
         msg.set_version(kd.version());
         parse_replay_header(&msg, &kd);
     }
-    if (option != NULL && option->include_stage_header)
+    if (option != nullptr && option->include_stage_header)
         parse_stage_header(&msg, &kd);
 
-    return msg_write(msg, option != nullptr ? option->outfile : nullptr);
+    ParseResult res;
+    res.set_allocated_result15(&msg);
+    bool success = msg_write(res, option != nullptr ? option->outfile : nullptr);
+    msg = *res.release_result15();
+    return success;
 }
 
 void rpy_th15(Rpy* rpy) {

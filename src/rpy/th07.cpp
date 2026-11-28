@@ -5,7 +5,11 @@
 #include "ksy/th07.h"
 #include "proto/th07.pb.h"
 #include "proto/thdef.pb.h"
+#include "proto/parse_result.pb.h"
 #include "msgutils.h"
+#include <google/protobuf/timestamp.pb.h>
+
+using namespace thrpy;
 
 static const size_t KEY_OFFSET = 13;
 static const size_t CRYPT_OFFSET = 16;
@@ -51,11 +55,18 @@ static size_t pack(RpyBuf* buf) {
     return buf->size;
 }
 
+static void set_date(th07::ReplayData* msg, const std::string& date) {
+    google::protobuf::Timestamp* t = new google::protobuf::Timestamp(
+        date_to_timestamp(date, "%m/%d")
+    );
+    msg->set_allocated_timestamp(t);
+}
+
 static void parse_replay_header(th07::ReplayData* msg, const th07_t* body) {
     msg->set_shot(static_cast<th07::Shot>(body->shot()));
     msg->set_difficulty(static_cast<thdef::Difficulty>(body->difficulty()));
     msg->set_score(body->score() * 10);
-    msg->set_date(body->date());
+    set_date(msg, body->date());
     msg->set_name(body->name());
     msg->set_slowdown(body->slowdown());
 }
@@ -87,15 +98,19 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
     th07_t kd(&ks);
     th07::ReplayData msg;
 
-    if (option != NULL && option->include_replay_header) {
+    if (option != nullptr && option->include_replay_header) {
         msg.set_game(thdef::GameId::TH07);
         msg.set_version(kd.version());
         parse_replay_header(&msg, &kd);
     }
-    if (option != NULL && option->include_stage_header)
+    if (option != nullptr && option->include_stage_header)
         parse_stage_header(&msg, &kd);
 
-    return msg_write(msg, option != nullptr ? option->outfile : nullptr);
+    ParseResult res;
+    res.set_allocated_result07(&msg);
+    bool success = msg_write(res, option != nullptr ? option->outfile : nullptr);
+    msg = *res.release_result07();
+    return success;
 }
 
 void rpy_th07(Rpy* rpy) {

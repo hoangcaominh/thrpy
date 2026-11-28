@@ -4,7 +4,11 @@
 #include "ksy/th06.h"
 #include "proto/th06.pb.h"
 #include "proto/thdef.pb.h"
+#include "proto/parse_result.pb.h"
 #include "msgutils.h"
+#include <google/protobuf/timestamp.pb.h>
+
+using namespace thrpy;
 
 static const size_t KEY_OFFSET = 14;
 static const size_t CRYPT_OFFSET = 15;
@@ -108,9 +112,16 @@ static size_t pack(RpyBuf* buf) {
     return pack_fn(buf);
 }
 
+static void set_date(th06::ReplayData* msg, const std::string& date) {
+    google::protobuf::Timestamp* t = new google::protobuf::Timestamp(
+        date_to_timestamp(date, "%D")
+    );
+    msg->set_allocated_timestamp(t);
+}
+
 static void parse_replay_header_original(th06::ReplayData* msg, const void* data) {
     const th06_o_t* body = reinterpret_cast<const th06_o_t*>(data);
-    msg->set_date(body->date());
+    set_date(msg, body->date());
     msg->set_shot(static_cast<th06::Shot>(body->shot()));
     msg->set_difficulty(static_cast<thdef::Difficulty>(body->difficulty()));
     msg->set_score(body->score());
@@ -120,7 +131,7 @@ static void parse_replay_header_original(th06::ReplayData* msg, const void* data
 
 static void parse_replay_header_classic(th06::ReplayData* msg, const void* data) {
     const th06_c_t* body = reinterpret_cast<const th06_c_t*>(data);
-    msg->set_date(body->date());
+    set_date(msg, body->date());
     msg->set_shot(static_cast<th06::Shot>(body->shot()));
     msg->set_difficulty(static_cast<thdef::Difficulty>(body->difficulty()));
     msg->set_score(body->score());
@@ -130,7 +141,7 @@ static void parse_replay_header_classic(th06::ReplayData* msg, const void* data)
 
 static void parse_replay_header_new_classic(th06::ReplayData* msg, const void* data) {
     const th06_nc_t* body = reinterpret_cast<const th06_nc_t*>(data);
-    msg->set_date(body->date());
+    set_date(msg, body->date());
     msg->set_shot(static_cast<th06::Shot>(body->shot()));
     th06::Mode mode = static_cast<th06::Mode>(body->mode());
     if (mode == th06::Mode::MODE_SPELL_PRACTICE)
@@ -222,15 +233,19 @@ static bool parse(const RpyBuf* buf, const RpyParseOptions* option) {
             return false;
     }
 
-    if (option != NULL && option->include_replay_header) {
+    if (option != nullptr && option->include_replay_header) {
         msg.set_game(thdef::GameId::TH06);
         msg.set_version(version);
         parse_replay_header(&msg, kd.body());
     }
-    if (option != NULL && option->include_stage_header)
+    if (option != nullptr && option->include_stage_header)
         parse_stage_header(&msg, kd.body());
 
-    return msg_write(msg, option != nullptr ? option->outfile : nullptr);
+    ParseResult res;
+    res.set_allocated_result06(&msg);
+    bool success = msg_write(res, option != nullptr ? option->outfile : nullptr);
+    msg = *res.release_result06();
+    return success;
 }
 
 void rpy_th06(Rpy* rpy) {

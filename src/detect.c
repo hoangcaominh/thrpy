@@ -2,6 +2,7 @@
 #include "rpy/th06.h"
 #include "rpy/th07.h"
 #include "rpy/th08.h"
+#include "rpy/th09.h"
 #include "rpy/th10.h"
 #include "rpy/th11.h"
 #include "rpy/th12.h"
@@ -82,6 +83,9 @@ void rpy_autoconf(Rpy* rpy, const RpyBuf* buf) {
             break;
         case TH08:
             rpy_th08(rpy);
+            break;
+        case TH09:
+            rpy_th09(rpy);
             break;
         case TH10:
             rpy_th10(rpy);
