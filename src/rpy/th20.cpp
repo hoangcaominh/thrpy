@@ -23,8 +23,8 @@ static size_t pack(RpyBuf* buf) {
 }
 
 static void parse_replay_header(th20::ReplayData* msg, th20_t* data) {
-    msg->set_shot(static_cast<th20::Shot>(data->shot()));
     const auto& stones = *data->stones();
+    msg->set_shot(static_cast<th20::Shot>(data->shot() * 8 + stones[0]));
     msg->set_stone_main(static_cast<th20::Stone>(stones[0]));
     msg->set_stone_unfocused(static_cast<th20::Stone>(stones[1]));
     msg->set_stone_focused(static_cast<th20::Stone>(stones[2]));
