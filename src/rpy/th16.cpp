@@ -23,8 +23,15 @@ static size_t pack(RpyBuf* buf) {
 }
 
 static void parse_replay_header(th16::ReplayData* msg, th16_t* data) {
-    msg->set_shot(static_cast<th16::Shot>(data->shot() * 5 + data->season()));
-    msg->set_difficulty(static_cast<thdef::Difficulty>(data->difficulty()));
+    th16::Shot shot;
+    thdef::Difficulty difficulty = static_cast<thdef::Difficulty>(data->difficulty());
+    if (difficulty == thdef::Difficulty::EXTRA)
+        shot = static_cast<th16::Shot>(data->shot() + 16);
+    else
+        shot = static_cast<th16::Shot>(data->shot() * 4 + data->season());
+
+    msg->set_shot(shot);
+    msg->set_difficulty(difficulty);
     msg->set_score(data->score() * 10);
     google::protobuf::Timestamp* t = new google::protobuf::Timestamp();
     t->set_seconds(data->timestamp());
